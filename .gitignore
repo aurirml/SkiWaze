@@ -5,3 +5,4 @@ local.properties
 .gradle/buildOutputCleanup/buildOutputCleanup.lock
 .gradle/buildOutputCleanup/outputFiles.bin
 .gradle/config.properties
+/.gradle
