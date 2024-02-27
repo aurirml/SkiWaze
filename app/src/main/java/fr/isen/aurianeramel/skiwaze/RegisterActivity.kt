@@ -6,42 +6,35 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+
 
 class RegisterActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -60,6 +53,9 @@ class RegisterActivity : ComponentActivity() {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
+            val nom = remember { mutableStateOf(TextFieldValue("")) }
+            val prenom = remember { mutableStateOf(TextFieldValue("")) }
+            var showPassword by remember { mutableStateOf(false) }
 
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -67,17 +63,65 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
+                    value = nom.value,
+                    onValueChange = { nom.value = it },
+                    label = { Text("Nom") },
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                TextField(
+                    value = prenom.value,
+                    onValueChange = { prenom.value = it },
+                    label = { Text("Prénom") },
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                TextField(
                     value = mail.value,
                     onValueChange = { mail.value = it },
-                    label = { Text("Adresse mail") }
+                    label = { Text("Adresse mail") },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Email
+                    )
                 )
+
                 Spacer(modifier = Modifier.height(10.dp))
+
                 TextField(
                     value = password.value,
                     onValueChange = { password.value = it },
                     label = { Text("Mot de passe") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    trailingIcon = {
+                        val passwordIcon = if (showPassword) {
+                            Icons.Default.Visibility
+                        } else {
+                            Icons.Default.VisibilityOff
+                        }
+                        val description = if (showPassword) {
+                            "Hide Password"
+                        } else {
+                            "Show Password"
+                        }
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(imageVector = passwordIcon, contentDescription = description)
+                        }
+                    }
                 )
                 Spacer(Modifier.height(5.dp))
                 Button(
@@ -86,7 +130,7 @@ class RegisterActivity : ComponentActivity() {
                     Text("Créer un compte")
                 }
                 Spacer(Modifier.height(10.dp))
-                Row (verticalAlignment = Alignment.CenterVertically){
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Vous avez déjà un comte ?"
                     )
@@ -118,15 +162,9 @@ class RegisterActivity : ComponentActivity() {
     }
 
     fun reload() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, PisteActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    fun writeNewUser(userId: String, name: String, email: String) {
-        //val user = User(name, email)
-
-        //database.child("users").child(userId).setValue(user)
     }
 }
 

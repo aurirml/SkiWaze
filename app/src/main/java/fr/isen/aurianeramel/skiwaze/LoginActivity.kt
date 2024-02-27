@@ -21,6 +21,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 class LoginActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
 
@@ -34,8 +40,10 @@ class LoginActivity : ComponentActivity() {
         }
 
         setContent {
+            Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
+            var showPassword by remember { mutableStateOf(false) }
 
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -45,28 +53,49 @@ class LoginActivity : ComponentActivity() {
                 TextField(
                     value = mail.value,
                     onValueChange = { mail.value = it },
-                    label = { Text("Adresse mail") }
+                    label = { Text("Adresse mail") },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Email
+                    )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 TextField(
                     value = password.value,
                     onValueChange = { password.value = it },
                     label = { Text("Mot de passe") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    trailingIcon = {
+                        val passwordIcon = if (showPassword) {
+                            Icons.Default.Visibility
+                        } else {
+                            Icons.Default.VisibilityOff
+                        }
+                        val description = if (showPassword) {
+                            "Hide Password"
+                        } else {
+                            "Show Password"
+                        }
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(imageVector = passwordIcon, contentDescription = description)
+                        }
+                    }
                 )
                 Button(
                     onClick = { signIn(mail.value.text, password.value.text) }
                 ){
                     Text("Se connecter")
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Pas de compte ?"
-
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
                     createAccount()
 
                 }
@@ -76,7 +105,7 @@ class LoginActivity : ComponentActivity() {
     }
 
     fun reload() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, PisteActivity::class.java)
         startActivity(intent)
         finish()
     }

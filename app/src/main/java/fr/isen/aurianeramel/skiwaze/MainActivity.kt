@@ -40,21 +40,23 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    Column(verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally){
+                    if (currentUser != null) {
+                        Text("Bonjour"
+                        )
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Greeting()
                         Spacer(Modifier.height(20.dp))
-                        if (currentUser != null) {
-                            Text("Bonjour")
-                        } else {
-                            Row{
+                        if (currentUser == null) {
+                            Row {
                                 Connexion()
                             }
                         }
                     }
-
                 }
-
             }
         }
     }
