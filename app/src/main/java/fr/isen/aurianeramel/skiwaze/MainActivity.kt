@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.material3.*
 import android.content.Intent
-import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 
 
