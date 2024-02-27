@@ -40,21 +40,23 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    Column(verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally){
+                    if (currentUser != null) {
+                        Text("Bonjour"
+                        )
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Greeting()
                         Spacer(Modifier.height(20.dp))
-                        if (currentUser != null) {
-                            Text("Bonjour")
-                        } else {
-                            Row{
+                        if (currentUser == null) {
+                            Row {
                                 Connexion()
                             }
                         }
                     }
-
                 }
-
             }
         }
     }
@@ -74,6 +76,8 @@ fun Greeting(modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.height(20.dp))
             Piste()
+            Remonte()
+
         }
     }
     Row {
@@ -134,6 +138,25 @@ fun Piste() {
             .width(250.dp)
     ) {
         Text("Piste")
+    }
+}
+
+@Composable
+fun Remonte() {
+    val context = LocalContext.current
+    Button(
+        onClick = {
+            val intent = Intent(context, RemonteActivity::class.java)
+            context.startActivity(intent)
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.alice_blue),
+            contentColor = colorResource(R.color.dark_slate_blue)),
+        modifier = Modifier
+            .height(40.dp)
+            .width(250.dp)
+    ) {
+        Text("Remontés")
     }
 }
 

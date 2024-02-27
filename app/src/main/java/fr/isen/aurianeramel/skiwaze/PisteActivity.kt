@@ -51,7 +51,7 @@ class PisteActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    test()
+
                 }
                 Greeting2()
             }
@@ -61,15 +61,15 @@ class PisteActivity : ComponentActivity() {
 }
 
 @Composable
-fun GetData(remontees: SnapshotStateList<Pistes>) {
+fun GetData(pisteee: SnapshotStateList<Pistes>) {
     Log.d("database", "a")
     DataBaseHelper.database.getReference("Pistes")
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("database", "b")
                 val _Pistes = snapshot.children.mapNotNull { it.getValue(Pistes::class.java) }
-                Log.d("database", remontees.toString())
-                remontees.addAll(_Pistes)
+                Log.d("database", pisteee.toString())
+                pisteee.addAll(_Pistes)
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.e("dataBase", error.toString())
@@ -77,12 +77,7 @@ fun GetData(remontees: SnapshotStateList<Pistes>) {
         })
 }
 
-@Composable
-fun test(){
-    Text(
-        text="Test"
-    )
-}
+
 @Composable
 fun Greeting2() {
     val pistes = remember {
