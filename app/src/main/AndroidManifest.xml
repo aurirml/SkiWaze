@@ -29,7 +29,7 @@
         </activity>
         <activity android:name=".PisteActivity">
         </activity>
-        <activity android:name=".ProfilActivity">
+        <activity android:name=".RemonteActivity">
         </activity>
     </application>
 
