@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "951027433003",
+    "firebase_url": "https://stationski-f3f87-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "stationski-f3f87",
+    "storage_bucket": "stationski-f3f87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951027433003:android:5cbf8a760080168b02346e",
+        "android_client_info": {
+          "package_name": "fr.isen.aurianeramel.skiwaze"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEgb_iqbnKs2Y9sFA-uqojjQyO-XIVhB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
