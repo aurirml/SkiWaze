@@ -4,36 +4,60 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.ui.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.text.input.*
-import androidx.compose.ui.unit.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import androidx.compose.ui.Modifier
 import com.google.firebase.ktx.Firebase
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-class LoginActivity : ComponentActivity() {
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+
+class RegisterActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         auth = Firebase.auth
+        //database = Firebase.database.reference
         val currentUser = auth.currentUser
         if (currentUser != null) {
             reload()
         }
 
         setContent {
+            Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
 
@@ -55,41 +79,35 @@ class LoginActivity : ComponentActivity() {
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                 )
+                Spacer(Modifier.height(5.dp))
                 Button(
-                    onClick = { signIn(mail.value.text, password.value.text) }
-                ){
-                    Text("Se connecter")
+                    onClick = { addUser(mail.value.text, password.value.text) }
+                ) {
+                    Text("Créer un compte")
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                Row {
+                Spacer(Modifier.height(10.dp))
+                Row (verticalAlignment = Alignment.CenterVertically){
                     Text(
-                        text = "Pas de compte ?"
-
+                        text = "Vous avez déjà un comte ?"
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    createAccount()
-
+                    signIn()
                 }
             }
         }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 
-    fun reload() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 
-    fun signIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
+    fun addUser(email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    val user = auth.currentUser
                     reload()
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w("signInWithEmail:failure", task.exception)
+                    Log.w("createUserWithEmail:failure", task.exception)
                     Toast.makeText(
                         baseContext,
                         "Authentication failed.",
@@ -98,16 +116,28 @@ class LoginActivity : ComponentActivity() {
                 }
             }
     }
+
+    fun reload() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    fun writeNewUser(userId: String, name: String, email: String) {
+        //val user = User(name, email)
+
+        //database.child("users").child(userId).setValue(user)
+    }
 }
 
 @Composable
-fun createAccount(){
+fun signIn() {
     val context = LocalContext.current
     TextButton(
         onClick = {
-            val intent = Intent(context, RegisterActivity::class.java)
-            context.startActivity(intent) }
+
+        }
     ) {
-        Text("En créer un.")
+        Text("Se connecter.")
     }
 }
