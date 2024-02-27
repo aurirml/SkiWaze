@@ -29,6 +29,8 @@
         </activity>
         <activity android:name=".PisteActivity">
         </activity>
+        <activity android:name=".RemonteActivity">
+        </activity>
     </application>
 
 </manifest>
