@@ -10,4 +10,4 @@ data class Pistes(val id:Int=0,
                   val snow: Int=0,
                   val avalanche: Boolean=false,
                   val damne: Boolean=true,
-)
+    )

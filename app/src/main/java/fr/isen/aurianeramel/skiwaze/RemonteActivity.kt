@@ -26,11 +26,9 @@ import fr.isen.aurianeramel.skiwaze.database.Pistes
 
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
-import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 
-
-class PisteActivity : ComponentActivity() {
+class RemonteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -42,52 +40,38 @@ class PisteActivity : ComponentActivity() {
                 ) {
 
                 }
-                Greeting2()
+                Greeting3()
             }
         }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 }
-
 @Composable
-fun GetData(pisteee: SnapshotStateList<Pistes>) {
+fun GetData2(remontees: SnapshotStateList<Remontees>) {
     Log.d("database", "a")
-    DataBaseHelper.database.getReference("Pistes")
+    DataBaseHelper.database.getReference("Remontees")
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("database", "b")
-                val _Pistes = snapshot.children.mapNotNull { it.getValue(Pistes::class.java) }
-                Log.d("database", pisteee.toString())
-                pisteee.addAll(_Pistes)
+                val _Remontees = snapshot.children.mapNotNull { it.getValue(Remontees::class.java) }
+                Log.d("database", remontees.toString())
+                remontees.addAll(_Remontees)
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.e("dataBase", error.toString())
             }
         })
 }
-
-
 @Composable
-fun Greeting2() {
-    val pistes = remember {
-        mutableStateListOf<Pistes>()
+fun Greeting3() {
+    val remonteeees = remember {
+        mutableStateListOf<Remontees>()
     }
     LazyColumn {
-        items(pistes.toList()) {piste ->
-            Column {
-                Text(
-                    text = piste.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Ajoutez une marge pour l'esthétique
-                )
-                Divider() // Ajoute une ligne de séparation entre les éléments
-            }
-
-
-            //Text(it.name)
+        items(remonteeees.toList()) {
+            Text(it.name)
         }
     }
     Log.d("database", "oui")
-    GetData(pistes)
+    GetData2(remonteeees)
 }
