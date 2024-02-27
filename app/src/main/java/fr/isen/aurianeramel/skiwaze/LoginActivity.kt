@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -17,11 +18,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import androidx.compose.ui.Modifier
 import com.google.firebase.ktx.Firebase
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.Alignment
+import java.security.AllPermission
 
 class LoginActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -41,20 +40,23 @@ class LoginActivity : ComponentActivity() {
             SkiWazeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface {
-                    Column {
-                        TextField(
-                            value = mail.value,
-                            onValueChange = {mail.value = it},
-                            label = { Text("Adresse mail")}
-                        )
-                        Spacer(Modifier.height(10.dp))
-                        TextField(
-                            value = password.value,
-                            onValueChange = {password.value = it},
-                            label = {Text("Mot de passe")},
-                            visualTransformation = PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center) {
+                        Column {
+                            TextField(
+                                value = mail.value,
+                                onValueChange = { mail.value = it },
+                                label = { Text("Adresse mail") }
                             )
+                            Spacer(Modifier.height(10.dp))
+                            TextField(
+                                value = password.value,
+                                onValueChange = { password.value = it },
+                                label = { Text("Mot de passe") },
+                                visualTransformation = PasswordVisualTransformation(),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                            )
+                        }
                     }
                 }
             }

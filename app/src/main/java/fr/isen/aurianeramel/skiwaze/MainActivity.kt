@@ -20,7 +20,6 @@ import androidx.compose.material3.*
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +49,8 @@ fun Greeting(modifier: Modifier = Modifier) {
                 modifier = modifier
             )
             Connexion()
+            Spacer(Modifier.height(20.dp))
+            Piste()
         }
     }
     Row {
@@ -91,7 +92,24 @@ fun Connexion() {
     }
 }
 
-
+@Composable
+fun Piste() {
+    val context = LocalContext.current
+    Button(
+        onClick = {
+            val intent = Intent(context, PisteActivity::class.java)
+            context.startActivity(intent)
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.alice_blue),
+            contentColor = colorResource(R.color.dark_slate_blue)),
+        modifier = Modifier
+            .height(40.dp)
+            .width(250.dp)
+    ) {
+        Text("Piste")
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
