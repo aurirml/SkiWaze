@@ -26,6 +26,7 @@ import fr.isen.aurianeramel.skiwaze.database.Pistes
 
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
+import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 
 class RemonteActivity : ComponentActivity() {
@@ -68,8 +69,19 @@ fun Greeting3() {
         mutableStateListOf<Remontees>()
     }
     LazyColumn {
-        items(remonteeees.toList()) {
-            Text(it.name)
+        items(remonteeees.toList()) {piste ->
+            Column {
+                Text(
+                    text = piste.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp), // Ajoutez une marge pour l'esthétique
+                )
+                Divider() // Ajoute une ligne de séparation entre les éléments
+            }
+
+
+            //Text(it.name)
         }
     }
     Log.d("database", "oui")
