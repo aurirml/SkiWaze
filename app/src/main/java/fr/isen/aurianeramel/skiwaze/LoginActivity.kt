@@ -25,7 +25,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    test()
+
                 }
             }
         }
@@ -34,8 +34,3 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun test(){
-    Text(
-        text="Test"
-    )
-}
