@@ -25,8 +25,11 @@ import com.google.firebase.database.ValueEventListener
 import fr.isen.aurianeramel.skiwaze.database.Pistes
 
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import fr.isen.aurianeramel.skiwaze.database.Remontees
+import androidx.compose.ui.unit.dp
+
 
 
 class PisteActivity : ComponentActivity() {
@@ -77,8 +80,42 @@ fun Greeting2() {
         mutableStateListOf<Pistes>()
     }
     LazyColumn {
-        items(pistes.toList()) {
-            Text(it.name)
+        items(pistes.toList()) { piste ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    ClickableText(
+                        text = piste.name,
+                        onClick = {
+                            // Gérer le clic sur le nom de la piste
+                            // Afficher les détails de la piste, par exemple, à l'aide d'un dialogue
+                            // ou en naviguant vers une nouvelle activité/écran.
+                        }
+                    )
+                    Button(
+                        onClick = {
+                            // Gérer le clic sur le bouton
+                            // Afficher les détails de la piste, par exemple, à l'aide d'un dialogue
+                            // ou en naviguant vers une nouvelle activité/écran.
+                        }
+                    ) {
+                        Text("Afficher détails")
+                    }
+                }
+                // Ajouter un Divider entre chaque élément
+                Divider(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+            //Text(it.name)
         }
     }
     Log.d("database", "oui")
