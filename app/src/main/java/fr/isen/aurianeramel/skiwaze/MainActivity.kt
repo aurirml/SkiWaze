@@ -18,11 +18,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.material3.*
 import android.content.Intent
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
+        //database = Firebase.database.reference
+        val currentUser = auth.currentUser
+
         setContent {
             SkiWazeTheme {
                 // A surface container using the 'background' color from the theme
@@ -31,8 +40,21 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    Greeting()
+                    Column(verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally){
+                        Greeting()
+                        Spacer(Modifier.height(20.dp))
+                        if (currentUser != null) {
+                            Text("Bonjour")
+                        } else {
+                            Row{
+                                Connexion()
+                            }
+                        }
+                    }
+
                 }
+
             }
         }
     }
@@ -40,15 +62,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
         Column {
             Text(
                 text = "Bienvenue sur SkiWaze !",
                 fontSize = 20.sp,
                 modifier = modifier
             )
-            Connexion()
             Spacer(Modifier.height(20.dp))
             Piste()
         }
@@ -59,11 +82,12 @@ fun Greeting(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Background(){
-    Box(modifier = Modifier
-        .background(color = colorResource(R.color.alice_blue))
-        .alpha(0.4f)
-    ){
+fun Background() {
+    Box(
+        modifier = Modifier
+            .background(color = colorResource(R.color.alice_blue))
+            .alpha(0.4f)
+    ) {
         Image(
             painter = painterResource(R.drawable.ski_image),
             contentDescription = null,
@@ -83,7 +107,8 @@ fun Connexion() {
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(R.color.alice_blue),
-            contentColor = colorResource(R.color.dark_slate_blue)),
+            contentColor = colorResource(R.color.dark_slate_blue)
+        ),
         modifier = Modifier
             .height(40.dp)
             .width(250.dp)
@@ -102,7 +127,8 @@ fun Piste() {
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(R.color.alice_blue),
-            contentColor = colorResource(R.color.dark_slate_blue)),
+            contentColor = colorResource(R.color.dark_slate_blue)
+        ),
         modifier = Modifier
             .height(40.dp)
             .width(250.dp)
