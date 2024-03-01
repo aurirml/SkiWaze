@@ -37,8 +37,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 import androidx.compose.ui.Alignment
-
-
+import com.google.firebase.database.FirebaseDatabase
 
 
 class PisteActivity : ComponentActivity() {
@@ -93,6 +92,7 @@ fun Greeting2() {
                         .padding(16.dp), // Ajoutez une marge pour l'esthétique
                 )
                 Divider() // Ajoute une ligne de séparation entre les éléments
+                DropDownMenu(piste)
             }
 
 
@@ -152,6 +152,8 @@ fun DropDownMenu(piste: Pistes) {
             DropdownMenuItem(
                 text = { Text("Avalanche: ${piste.avalanche}") },
                 onClick = {
+                    val newAvalancheState = !piste.avalanche
+                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id}").setValue(newAvalancheState)
                     Toast.makeText(context, "Avalanche: ${piste.avalanche}", Toast.LENGTH_SHORT)
                         .show()
                     expanded = false
