@@ -115,6 +115,7 @@ class LoginActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    Log.d("auth", auth.currentUser?.displayName ?: "")
                     reload()
                 } else {
                     // If sign in fails, display a message to the user.

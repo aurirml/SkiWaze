@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    Background()
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -58,6 +59,30 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @Composable
+    fun deco(){
+        Button(
+            onClick = {
+                Firebase.auth.signOut()
+                reload()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(R.color.alice_blue),
+                contentColor = colorResource(R.color.dark_slate_blue)),
+            modifier = Modifier
+                .height(40.dp)
+                .width(250.dp)
+        ) {
+            Text("Déconnexion")
+        }
+    }
+
+    fun reload() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 }
 
 @Composable
@@ -155,23 +180,6 @@ fun Remonte() {
             .width(250.dp)
     ) {
         Text("Remontés")
-    }
-}
-
-@Composable
-fun deco(){
-    Button(
-        onClick = {
-            Firebase.auth.signOut()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.alice_blue),
-            contentColor = colorResource(R.color.dark_slate_blue)),
-        modifier = Modifier
-            .height(40.dp)
-            .width(250.dp)
-    ) {
-        Text("Déconnexion")
     }
 }
 
