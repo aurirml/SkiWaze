@@ -95,8 +95,6 @@ fun Greeting2() {
                 Divider() // Ajoute une ligne de séparation entre les éléments
                 DropDownMenu(piste)
             }
-
-
             //Text(it.name)
         }
     }
@@ -164,3 +162,4 @@ fun DropDownMenu(piste: Pistes) {
     Log.d("database", "oui")
     GetData(pistes)
 }
+
