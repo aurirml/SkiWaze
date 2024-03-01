@@ -93,6 +93,7 @@ fun Greeting2() {
                         .padding(16.dp), // Ajoutez une marge pour l'esthétique
                 )
                 Divider() // Ajoute une ligne de séparation entre les éléments
+                DropDownMenu(piste)
             }
 
 
