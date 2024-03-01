@@ -53,8 +53,8 @@ class RegisterActivity : ComponentActivity() {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
-            val nom = remember { mutableStateOf(TextFieldValue("")) }
-            val prenom = remember { mutableStateOf(TextFieldValue("")) }
+            val lastname = remember { mutableStateOf(TextFieldValue("")) }
+            val firstname = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
 
             Column(
@@ -63,8 +63,8 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = nom.value,
-                    onValueChange = { nom.value = it },
+                    value = lastname.value,
+                    onValueChange = { lastname.value = it },
                     label = { Text("Nom") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
@@ -74,8 +74,8 @@ class RegisterActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 TextField(
-                    value = prenom.value,
-                    onValueChange = { prenom.value = it },
+                    value = firstname.value,
+                    onValueChange = { firstname.value = it },
                     label = { Text("Prénom") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
@@ -125,7 +125,7 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(Modifier.height(5.dp))
                 Button(
-                    onClick = { addUser(mail.value.text, password.value.text) }
+                    onClick = { addUser(mail.value.text, password.value.text, firstname.value.text, lastname.value.text) }
                 ) {
                     Text("Créer un compte")
                 }
