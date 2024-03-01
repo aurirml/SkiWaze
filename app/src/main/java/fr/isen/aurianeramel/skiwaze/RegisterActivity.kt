@@ -56,8 +56,7 @@ class RegisterActivity : ComponentActivity() {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
-            val lastname = remember { mutableStateOf(TextFieldValue("")) }
-            val firstname = remember { mutableStateOf(TextFieldValue("")) }
+            val username = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
 
             Column(
@@ -66,19 +65,8 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = lastname.value,
-                    onValueChange = { lastname.value = it },
-                    label = { Text("Nom") },
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                TextField(
-                    value = firstname.value,
-                    onValueChange = { firstname.value = it },
+                    value = username.value,
+                    onValueChange = { username.value = it },
                     label = { Text("Prénom") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
@@ -128,7 +116,7 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(Modifier.height(5.dp))
                 Button(
-                    onClick = { addUser(mail.value.text, password.value.text, firstname.value.text, lastname.value.text) }
+                    onClick = { addUser(mail.value.text, password.value.text, username.value.text) }
                 ) {
                     Text("Créer un compte")
                 }
