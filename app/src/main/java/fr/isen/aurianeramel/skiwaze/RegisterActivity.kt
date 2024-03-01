@@ -65,19 +65,8 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = lastname.value,
-                    onValueChange = { lastname.value = it },
-                    label = { Text("Nom") },
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                TextField(
-                    value = firstname.value,
-                    onValueChange = { firstname.value = it },
+                    value = username.value,
+                    onValueChange = { username.value = it },
                     label = { Text("Prénom") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
