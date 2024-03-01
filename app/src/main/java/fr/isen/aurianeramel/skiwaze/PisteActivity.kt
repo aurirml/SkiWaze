@@ -153,7 +153,7 @@ fun DropDownMenu(piste: Pistes) {
                 text = { Text("Avalanche: ${piste.avalanche}") },
                 onClick = {
                     val newAvalancheState = !piste.avalanche
-                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id}").setValue(newAvalancheState)
+                    FirebaseDatabase.getInstance().getReference("${piste.avalanche}").setValue(newAvalancheState)
                     Toast.makeText(context, "Avalanche: ${piste.avalanche}", Toast.LENGTH_SHORT)
                         .show()
                     expanded = false
