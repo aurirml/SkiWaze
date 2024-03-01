@@ -142,7 +142,7 @@ class RegisterActivity : ComponentActivity() {
     }
 
 
-    fun addUser(email: String, password: String) {
+    fun addUser(email: String, password: String, firstname:String, lastname:String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -158,6 +158,19 @@ class RegisterActivity : ComponentActivity() {
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
+            }
+        val ref = DataBaseHelper.database.getReference("User")
+        val user = ref.push() // Generate a unique key for each user
+        val userData = HashMap<String, Any>()
+        userData["firstname"] = firstname
+        userData["lastname"] = lastname
+        // Set user data in the database
+        user.setValue(userData)
+            .addOnSuccessListener {
+                Log.d("AddUserToDatabase", "User added to database successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("AddUserToDatabase", "Error adding user to database", e)
             }
     }
 
