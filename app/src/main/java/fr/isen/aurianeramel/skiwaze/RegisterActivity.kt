@@ -34,6 +34,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.userProfileChangeRequest
+import fr.isen.aurianeramel.skiwaze.database.User
 
 
 class RegisterActivity : ComponentActivity() {
@@ -142,11 +145,17 @@ class RegisterActivity : ComponentActivity() {
     }
 
 
-    fun addUser(email: String, password: String, firstname:String, lastname:String) {
+    fun addUser(email: String, password: String, username:String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    auth.currentUser?.let {
+                        val profileUpdates = userProfileChangeRequest {
+                            displayName = username
+                        }
+                        it.updateProfile(profileUpdates)
+                    }
                     val user = auth.currentUser
                     reload()
                 } else {
@@ -158,19 +167,6 @@ class RegisterActivity : ComponentActivity() {
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
-            }
-        val ref = DataBaseHelper.database.getReference("User")
-        val user = ref.push() // Generate a unique key for each user
-        val userData = HashMap<String, Any>()
-        userData["firstname"] = firstname
-        userData["lastname"] = lastname
-        // Set user data in the database
-        user.setValue(userData)
-            .addOnSuccessListener {
-                Log.d("AddUserToDatabase", "User added to database successfully")
-            }
-            .addOnFailureListener { e ->
-                Log.e("AddUserToDatabase", "Error adding user to database", e)
             }
     }
 
@@ -186,7 +182,8 @@ fun signIn() {
     val context = LocalContext.current
     TextButton(
         onClick = {
-
+            val intent = Intent(context, LoginActivity::class.java)
+            context.startActivity(intent)
         }
     ) {
         Text("Se connecter.")
