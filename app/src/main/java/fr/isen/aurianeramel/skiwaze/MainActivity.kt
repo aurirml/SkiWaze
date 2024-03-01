@@ -41,8 +41,19 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Background()
                     if (currentUser != null) {
-                        Text("Bonjour"
-                        )
+                        Button(
+                            onClick = {
+                                Firebase.auth.signOut()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.alice_blue),
+                                contentColor = colorResource(R.color.dark_slate_blue)),
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(250.dp)
+                        ) {
+                            Text("Déconnexion")
+                        }
                     }
                     Column(
                         verticalArrangement = Arrangement.Center,
