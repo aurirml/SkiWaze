@@ -67,7 +67,7 @@ class RegisterActivity : ComponentActivity() {
                 TextField(
                     value = username.value,
                     onValueChange = { username.value = it },
-                    label = { Text("Prénom") },
+                    label = { Text("Pseudo") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                     )
