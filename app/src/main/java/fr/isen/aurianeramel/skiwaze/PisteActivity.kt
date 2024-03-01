@@ -1,4 +1,5 @@
 package fr.isen.aurianeramel.skiwaze
+
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log

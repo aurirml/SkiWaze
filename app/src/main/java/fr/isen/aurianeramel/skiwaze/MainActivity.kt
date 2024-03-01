@@ -39,10 +39,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Background()
-                    if (currentUser != null) {
-                        deco()
-                    }
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -53,6 +49,9 @@ class MainActivity : ComponentActivity() {
                             Row {
                                 Connexion()
                             }
+                        }
+                        else{
+                            deco()
                         }
                     }
                 }
