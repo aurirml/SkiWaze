@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".RemonteActivity">
         </activity>
+        <activity android:name=".MapActivity">
+        </activity>
     </application>
 
 </manifest>
