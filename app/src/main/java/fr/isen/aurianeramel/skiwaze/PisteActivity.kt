@@ -92,10 +92,10 @@ fun Greeting2() {
                         .padding(16.dp), // Ajoutez une marge pour l'esthétique
                 )
                 Divider() // Ajoute une ligne de séparation entre les éléments
+                GetData(pistes)
                 DropDownMenu(piste)
+
             }
-
-
             //Text(it.name)
         }
     }
@@ -126,6 +126,23 @@ fun DropDownMenu(piste: Pistes) {
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
+
+
+                text = {
+                    val stateString = if (piste.state) "OUVERT" else "FERME"
+                    Text(stateString)
+                },
+                onClick = {
+
+                    val newState = !piste.state
+                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id-1}/state")
+                        .setValue(newState)
+                    val stateString = if (piste.state) "OUVERT" else "FERME"
+                    Toast.makeText(context, stateString, Toast.LENGTH_SHORT).show()
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
                 text = { Text("Niveau: ${piste.color}") },
                 onClick = {
                     Toast.makeText(context, "Niveau: ${piste.color}", Toast.LENGTH_SHORT).show()
@@ -153,11 +170,12 @@ fun DropDownMenu(piste: Pistes) {
                 text = { Text("Avalanche: ${piste.avalanche}") },
                 onClick = {
                     val newAvalancheState = !piste.avalanche
-                    FirebaseDatabase.getInstance().getReference("${piste.avalanche}").setValue(newAvalancheState)
-                    Toast.makeText(context, "Avalanche: ${piste.avalanche}", Toast.LENGTH_SHORT)
-                        .show()
+                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id-1}/avalanche")
+                        .setValue(newAvalancheState)
+                    Toast.makeText(context, "Avalanche: $newAvalancheState", Toast.LENGTH_SHORT).show()
                     expanded = false
                 }
+
             )
 
         }
@@ -165,3 +183,5 @@ fun DropDownMenu(piste: Pistes) {
     Log.d("database", "oui")
     GetData(pistes)
 }
+
+
