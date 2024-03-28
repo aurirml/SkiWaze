@@ -1,5 +1,6 @@
 package fr.isen.aurianeramel.skiwaze
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,8 +39,9 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 import androidx.compose.ui.Alignment
-
-
+import androidx.compose.ui.res.colorResource
+import androidx.core.content.ContextCompat.startActivity
+import com.google.firebase.database.FirebaseDatabase
 
 
 class PisteActivity : ComponentActivity() {
@@ -78,32 +80,46 @@ fun GetData(pisteee: SnapshotStateList<Pistes>) {
         })
 }
 
-
 @Composable
 fun Greeting2() {
     val pistes = remember {
         mutableStateListOf<Pistes>()
     }
+    val context = LocalContext.current
+    // Obtenir les données des pistes
+    GetData(pistes)
+
     LazyColumn {
-        items(pistes.toList()) {piste ->
+        items(pistes.toList()) { piste ->
             Column {
-                Text(
-                    text = piste.name,
+                Button(
+                    onClick = {
+                        val intent = Intent(context, PisteInfoActivity::class.java)
+                        intent.putExtra("pisteId", piste.id) // Envoyer l'identifiant de la piste à l'activité suivante
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.alice_blue),
+                        contentColor = colorResource(R.color.dark_slate_blue)
+                    ),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Ajoutez une marge pour l'esthétique
-                )
+                        .height(40.dp)
+                        .width(250.dp)
+                ) {
+                    Text(piste.name) // Utiliser le nom de la piste comme libellé du bouton
+                }
                 Divider() // Ajoute une ligne de séparation entre les éléments
-                DropDownMenu(piste)
+                //Piste2(piste) // Passer la piste à Piste2
             }
-            //Text(it.name)
         }
     }
-    Log.d("database", "oui")
-    GetData(pistes)
 }
 
-@Composable
+
+
+
+
+/*@Composable
 fun DropDownMenu(piste: Pistes) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -125,6 +141,23 @@ fun DropDownMenu(piste: Pistes) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            DropdownMenuItem(
+
+
+                text = {
+                    val stateString = if (piste.state) "OUVERT" else "FERME"
+                    Text(stateString)
+                },
+                onClick = {
+
+                    val newState = !piste.state
+                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id-1}/state")
+                        .setValue(newState)
+                    val stateString = if (piste.state) "OUVERT" else "FERME"
+                    Toast.makeText(context, stateString, Toast.LENGTH_SHORT).show()
+                    expanded = false
+                }
+            )
             DropdownMenuItem(
                 text = { Text("Niveau: ${piste.color}") },
                 onClick = {
@@ -152,21 +185,21 @@ fun DropDownMenu(piste: Pistes) {
             DropdownMenuItem(
                 text = { Text("Avalanche: ${piste.avalanche}") },
                 onClick = {
-                    Toast.makeText(context, "Avalanche: ${piste.avalanche}", Toast.LENGTH_SHORT)
-                        .show()
+                    val newAvalancheState = !piste.avalanche
+                    FirebaseDatabase.getInstance().getReference("Pistes/${piste.id-1}/avalanche")
+                        .setValue(newAvalancheState)
+                    Toast.makeText(context, "Avalanche: $newAvalancheState", Toast.LENGTH_SHORT).show()
                     expanded = false
                 }
+
             )
 
-        }
+         }
     }
     Log.d("database", "oui")
     GetData(pistes)
 }
-/*fun prévision(depart : Pistes, arrive : Pistes){
-    val matricechemin=mutableStateListOf<MutableList<Int>>()
-    val chemintest=mutableStateListOf<Any>()
-    while(true){
-        depart=
-    }
-}*/
+*/
+
+
+

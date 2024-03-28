@@ -104,6 +104,7 @@ fun Greeting(modifier: Modifier = Modifier) {
             Spacer(Modifier.height(20.dp))
             MapButton()
 
+
         }
     }
     Row {
@@ -185,6 +186,7 @@ fun Remonte() {
         Text("Remontés")
     }
 }
+
 
 @Composable
 fun MapButton() {
