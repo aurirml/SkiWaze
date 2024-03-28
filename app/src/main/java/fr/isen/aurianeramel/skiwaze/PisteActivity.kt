@@ -1,5 +1,6 @@
 package fr.isen.aurianeramel.skiwaze
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.colorResource
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -77,34 +80,46 @@ fun GetData(pisteee: SnapshotStateList<Pistes>) {
         })
 }
 
-
 @Composable
 fun Greeting2() {
     val pistes = remember {
         mutableStateListOf<Pistes>()
     }
-    LazyColumn {
-        items(pistes.toList()) {piste ->
-            Column {
-                Text(
-                    text = piste.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Ajoutez une marge pour l'esthétique
-                )
-                Divider() // Ajoute une ligne de séparation entre les éléments
-                GetData(pistes)
-                DropDownMenu(piste)
+    val context = LocalContext.current
+    // Obtenir les données des pistes
+    GetData(pistes)
 
+    LazyColumn {
+        items(pistes.toList()) { piste ->
+            Column {
+                Button(
+                    onClick = {
+                        val intent = Intent(context, PisteInfoActivity::class.java)
+                        intent.putExtra("pisteId", piste.id) // Envoyer l'identifiant de la piste à l'activité suivante
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.alice_blue),
+                        contentColor = colorResource(R.color.dark_slate_blue)
+                    ),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(250.dp)
+                ) {
+                    Text(piste.name) // Utiliser le nom de la piste comme libellé du bouton
+                }
+                Divider() // Ajoute une ligne de séparation entre les éléments
+                //Piste2(piste) // Passer la piste à Piste2
             }
-            //Text(it.name)
         }
     }
-    Log.d("database", "oui")
-    GetData(pistes)
 }
 
-@Composable
+
+
+
+
+/*@Composable
 fun DropDownMenu(piste: Pistes) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -184,10 +199,7 @@ fun DropDownMenu(piste: Pistes) {
     Log.d("database", "oui")
     GetData(pistes)
 }
-/*fun prévision(depart : Pistes, arrive : Pistes){
-    val matricechemin=mutableStateListOf<MutableList<Int>>()
-    val chemintest=mutableStateListOf<Any>()
-    while(true){
-        depart=
-    }
-}*/
+*/
+
+
+

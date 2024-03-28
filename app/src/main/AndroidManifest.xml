@@ -33,6 +33,8 @@
         </activity>
         <activity android:name=".MapActivity">
         </activity>
+        <activity android:name=".PisteInfoActivity">
+        </activity>
     </application>
 
 </manifest>
