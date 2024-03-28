@@ -34,6 +34,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.userProfileChangeRequest
+import fr.isen.aurianeramel.skiwaze.database.User
 
 
 class RegisterActivity : ComponentActivity() {
@@ -53,8 +56,7 @@ class RegisterActivity : ComponentActivity() {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
-            val lastname = remember { mutableStateOf(TextFieldValue("")) }
-            val firstname = remember { mutableStateOf(TextFieldValue("")) }
+            val username = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
 
             Column(
@@ -63,20 +65,9 @@ class RegisterActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = lastname.value,
-                    onValueChange = { lastname.value = it },
-                    label = { Text("Nom") },
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                TextField(
-                    value = firstname.value,
-                    onValueChange = { firstname.value = it },
-                    label = { Text("Prénom") },
+                    value = username.value,
+                    onValueChange = { username.value = it },
+                    label = { Text("Pseudo") },
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                     )
@@ -125,7 +116,7 @@ class RegisterActivity : ComponentActivity() {
                 )
                 Spacer(Modifier.height(5.dp))
                 Button(
-                    onClick = { addUser(mail.value.text, password.value.text, firstname.value.text, lastname.value.text) }
+                    onClick = { addUser(mail.value.text, password.value.text, username.value.text) }
                 ) {
                     Text("Créer un compte")
                 }
@@ -142,11 +133,17 @@ class RegisterActivity : ComponentActivity() {
     }
 
 
-    fun addUser(email: String, password: String, firstname:String, lastname:String) {
+    fun addUser(email: String, password: String, username:String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    auth.currentUser?.let {
+                        val profileUpdates = userProfileChangeRequest {
+                            displayName = username
+                        }
+                        it.updateProfile(profileUpdates)
+                    }
                     val user = auth.currentUser
                     reload()
                 } else {
@@ -158,19 +155,6 @@ class RegisterActivity : ComponentActivity() {
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
-            }
-        val ref = DataBaseHelper.database.getReference("User")
-        val user = ref.push() // Generate a unique key for each user
-        val userData = HashMap<String, Any>()
-        userData["firstname"] = firstname
-        userData["lastname"] = lastname
-        // Set user data in the database
-        user.setValue(userData)
-            .addOnSuccessListener {
-                Log.d("AddUserToDatabase", "User added to database successfully")
-            }
-            .addOnFailureListener { e ->
-                Log.e("AddUserToDatabase", "Error adding user to database", e)
             }
     }
 
@@ -186,7 +170,8 @@ fun signIn() {
     val context = LocalContext.current
     TextButton(
         onClick = {
-
+            val intent = Intent(context, LoginActivity::class.java)
+            context.startActivity(intent)
         }
     ) {
         Text("Se connecter.")

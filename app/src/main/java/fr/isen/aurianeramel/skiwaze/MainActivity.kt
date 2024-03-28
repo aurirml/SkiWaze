@@ -40,9 +40,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    if (currentUser != null) {
-                        deco()
-                    }
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -54,11 +51,38 @@ class MainActivity : ComponentActivity() {
                                 Connexion()
                             }
                         }
+                        else{
+                            deco()
+                        }
                     }
                 }
             }
         }
     }
+    @Composable
+    fun deco(){
+        Button(
+            onClick = {
+                Firebase.auth.signOut()
+                reload()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(R.color.alice_blue),
+                contentColor = colorResource(R.color.dark_slate_blue)),
+            modifier = Modifier
+                .height(40.dp)
+                .width(250.dp)
+        ) {
+            Text("Déconnexion")
+        }
+    }
+
+    fun reload() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 }
 
 @Composable
@@ -75,7 +99,12 @@ fun Greeting(modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.height(20.dp))
             Piste()
+            Spacer(Modifier.height(20.dp))
             Remonte()
+            Spacer(Modifier.height(20.dp))
+            MapButton()
+
+
         }
     }
     Row {
@@ -160,10 +189,12 @@ fun Remonte() {
 
 
 @Composable
-fun deco(){
+fun MapButton() {
+    val context = LocalContext.current
     Button(
         onClick = {
-            Firebase.auth.signOut()
+            val intent = Intent(context, MapActivity::class.java)
+            context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(R.color.alice_blue),
@@ -172,7 +203,7 @@ fun deco(){
             .height(40.dp)
             .width(250.dp)
     ) {
-        Text("Déconnexion")
+        Text("Map")
     }
 }
 

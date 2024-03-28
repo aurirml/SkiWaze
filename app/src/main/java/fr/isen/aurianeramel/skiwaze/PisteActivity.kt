@@ -1,4 +1,5 @@
 package fr.isen.aurianeramel.skiwaze
+
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
@@ -178,10 +179,15 @@ fun DropDownMenu(piste: Pistes) {
 
             )
 
-        }
+         }
     }
     Log.d("database", "oui")
     GetData(pistes)
 }
-
-
+/*fun prévision(depart : Pistes, arrive : Pistes){
+    val matricechemin=mutableStateListOf<MutableList<Int>>()
+    val chemintest=mutableStateListOf<Any>()
+    while(true){
+        depart=
+    }
+}*/
