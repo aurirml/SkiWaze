@@ -116,7 +116,7 @@ fun PisteInfoContent(pisteId: Int) {
                             val newDamnageState = !piste.damne
                             FirebaseDatabase.getInstance().getReference("Pistes/${piste.id - 1}/damne")
                                 .setValue(newDamnageState)
-                            Toast.makeText(context, "Avalanche: $newDamnageState", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Damnée: $newDamnageState", Toast.LENGTH_SHORT).show()
                             getPisteById(pisteId) { piste ->
                                 pisteState.value = piste
                             }
@@ -140,6 +140,30 @@ fun PisteInfoContent(pisteId: Int) {
                             FirebaseDatabase.getInstance().getReference("Pistes/${piste.id - 1}/avalanche")
                                 .setValue(newAvalancheState)
                             Toast.makeText(context, "Avalanche: $newAvalancheState", Toast.LENGTH_SHORT).show()
+                            getPisteById(pisteId) { piste ->
+                                pisteState.value = piste
+                            }
+
+                        }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if(piste.state)Text("La piste est ouverte")
+                else Text("La piste est fermée")
+                Spacer(modifier = Modifier.width(8.dp)) // Ajouter un espace entre le texte et l'icône du bouton
+                Icon(
+                    imageVector = Icons.Default.Autorenew, // Utiliser une icône pour indiquer qu'il est possible de modifier
+                    contentDescription = "Modifier ouverture",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            val newStateState = !piste.state
+                            FirebaseDatabase.getInstance().getReference("Pistes/${piste.id - 1}/state")
+                                .setValue(newStateState)
+                            Toast.makeText(context, "State: $newStateState", Toast.LENGTH_SHORT).show()
                             getPisteById(pisteId) { piste ->
                                 pisteState.value = piste
                             }
