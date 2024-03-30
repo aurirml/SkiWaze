@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.NavHost
@@ -66,39 +67,37 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                        if (currentUser == null) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center) {
-                                Greeting()
-                                Spacer(Modifier.height(20.dp))
-                                Co()
-                            }
+                    if (currentUser == null) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Greeting()
+                            Spacer(Modifier.height(20.dp))
+                            CoMessage()
                         }
-                        else{
-                            Column {
-
-
-                                deco()
-                            }
+                    } else {
+                        Column {
+                            Piste()
                         }
+                    }
 
                 }
             }
         }
     }
 
-
     @Composable
-    fun deco(){
+    fun deco() {
         Button(
             onClick = {
                 Firebase.auth.signOut()
                 reload()
             },
             colors = ButtonDefaults.buttonColors(
-               // containerColor = colorResource(R.color.alice_blue),
-              //  contentColor = colorResource(R.color.dark_slate_blue)
-                ),
+                // containerColor = colorResource(R.color.alice_blue),
+                //  contentColor = colorResource(R.color.dark_slate_blue)
+            ),
             modifier = Modifier
                 .height(40.dp)
                 .width(250.dp)
@@ -117,20 +116,22 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
-        Spacer(Modifier.height(20.dp))
-        Text(
-            text = "\t SkiWaze",
-            fontFamily = stg,
-            fontSize = 60.sp,
-            color = colorResource(R.color.gray)
-        )
+    Spacer(Modifier.height(20.dp))
+    Text(
+        text = stringResource(R.string.app_name),
+        fontFamily = stg,
+        fontSize = 60.sp,
+        color = colorResource(R.color.gray)
+    )
 
-    }
+}
 
 @Composable
-fun Co(modifier: Modifier = Modifier){
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+fun CoMessage(modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Image(
             painter = painterResource(R.drawable.skiwaze_logo),
             contentDescription = null,
@@ -139,20 +140,25 @@ fun Co(modifier: Modifier = Modifier){
     }
 
     Spacer(modifier.height(20.dp))
-        Connexion()
-        Spacer(modifier.height(20.dp))
-        Register()
-    }
+    Connexion()
+    Spacer(modifier.height(20.dp))
+    Register()
+}
 
 @Composable
 fun Background() {
-    val linear = Brush.linearGradient(listOf(colorResource(R.color.light_blue), colorResource(R.color.water)))
+    val linear = Brush.linearGradient(
+        listOf(
+            colorResource(R.color.light_blue),
+            colorResource(R.color.water)
+        )
+    )
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier
             .background(linear)
 
-    ){
+    ) {
     }
 }
 
@@ -171,7 +177,7 @@ fun Connexion() {
             .height(45.dp)
             .width(240.dp)
     ) {
-        Text("Connectez-vous")
+        Text(stringResource(R.string.connexion))
     }
 }
 
@@ -184,36 +190,40 @@ fun Register() {
             context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(
-           containerColor = colorResource(R.color.medium_grey),
-           // contentColor = colorResource(R.color.dark_slate_blue)
+            containerColor = colorResource(R.color.medium_grey),
+            // contentColor = colorResource(R.color.dark_slate_blue)
         ),
         modifier = Modifier
             .height(45.dp)
             .width(240.dp)
     ) {
-        Text("Créer un compte")
+        Text(stringResource(R.string.register))
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Piste() {
     val context = LocalContext.current
-    Button(
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.powder_blue)),
         onClick = {
             val intent = Intent(context, PisteActivity::class.java)
             context.startActivity(intent)
         },
-        colors = ButtonDefaults.buttonColors(
-          //  containerColor = colorResource(R.color.alice_blue),
-          //  contentColor = colorResource(R.color.dark_slate_blue)
-        ),
-        modifier = Modifier
-            .height(40.dp)
-            .width(250.dp)
-    ) {
-        Text("Piste")
-    }
+        content = {
+            Text(
+                text = stringResource(R.string.piste),
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+    )
 }
+
 
 @Composable
 fun Remonte() {
@@ -224,9 +234,9 @@ fun Remonte() {
             context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(
-           // containerColor = colorResource(R.color.alice_blue),
-           // contentColor = colorResource(R.color.dark_slate_blue)
-            ),
+            // containerColor = colorResource(R.color.alice_blue),
+            // contentColor = colorResource(R.color.dark_slate_blue)
+        ),
         modifier = Modifier
             .height(40.dp)
             .width(250.dp)
