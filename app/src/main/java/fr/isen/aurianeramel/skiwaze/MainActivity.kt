@@ -1,5 +1,6 @@
 package fr.isen.aurianeramel.skiwaze
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,11 +20,25 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.material3.*
 import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.DownhillSkiing
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.outlined.DownhillSkiing
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Map
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -53,6 +68,8 @@ data class BottomNavigationItem(
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
+
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
@@ -61,11 +78,64 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SkiWazeTheme {
+                val scrollState = rememberScrollState()
+                val items = listOf(
+                    BottomNavigationItem(
+                        title = "Home",
+                        selectedIcon = Icons.Filled.Home,
+                        unselectedIcon = Icons.Outlined.Home
+                    ),
+                    BottomNavigationItem(
+                        title = "Ski",
+                        selectedIcon = Icons.Filled.DownhillSkiing,
+                        unselectedIcon = Icons.Outlined.DownhillSkiing
+                    ),
+                    BottomNavigationItem(
+                        title = "Remontées",
+                        selectedIcon = Icons.Filled.Home,
+                        unselectedIcon = Icons.Outlined.Home
+                    ),
+                    BottomNavigationItem(
+                        title = "Map",
+                        selectedIcon = Icons.Filled.Map,
+                        unselectedIcon = Icons.Outlined.Map
+                    ),
+                    BottomNavigationItem(
+                        title = "Log Out",
+                        selectedIcon = Icons.AutoMirrored.Outlined.Logout,
+                        unselectedIcon = Icons.AutoMirrored.Outlined.Logout
+                    )
+                )
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    var selectedItemIndex by rememberSaveable {
+                        mutableIntStateOf(0)
+                    }
+                    Scaffold(
+                        bottomBar = {
+                            NavigationBar {
+                                items.forEachIndexed { index, item ->
+                                    NavigationBarItem(
+                                        selected = selectedItemIndex == index,
+                                        onClick = {
+                                            selectedItemIndex = index
+                                            //navController.navigate(item.title)
+                                        },
+                                        label = {
+                                            Text(text = item.title)
+                                        },
+                                        icon = {
+
+                                        })
+                                }
+                            }
+                        }
+                    ) {
+
+                    }
                     Background()
                     if (currentUser == null) {
                         Column(
@@ -77,8 +147,35 @@ class MainActivity : ComponentActivity() {
                             CoMessage()
                         }
                     } else {
-                        Column {
+                        Column(
+                            Modifier.verticalScroll(scrollState),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(Modifier.height(30.dp))
+                            Row {
+                                Text(
+                                    text = "Bienvenue \t",
+                                    fontFamily = stg,
+                                    fontSize = 30.sp,
+                                    modifier = Modifier
+                                )
+                                auth.currentUser?.displayName?.let {
+                                    Text(
+                                        text = it,
+                                        fontFamily = stg,
+                                        fontSize = 30.sp
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.height(20.dp))
                             Piste()
+                            Spacer(Modifier.height(20.dp))
+                            Remontee()
+                            Spacer(Modifier.height(20.dp))
+                            Piste()
+                            Spacer(Modifier.height(20.dp))
+                            deco()
                         }
                     }
 
@@ -86,6 +183,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     @Composable
     fun deco() {
@@ -203,48 +301,74 @@ fun Register() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Piste() {
+fun Piste(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
+        modifier = Modifier
+            .size(
+                width = 380.dp,
+                height = 230.dp
+            ),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.powder_blue)),
+            containerColor = colorResource(R.color.powder_blue)
+        ),
         onClick = {
             val intent = Intent(context, PisteActivity::class.java)
             context.startActivity(intent)
         },
         content = {
+            Image(
+                painter = painterResource(R.drawable.piste_ski),
+                contentDescription = null,
+                modifier = Modifier
+            )
             Text(
                 text = stringResource(R.string.piste),
-                modifier = Modifier.padding(16.dp)
+                color = colorResource(R.color.gray),
+                modifier = Modifier.padding(4.dp)
             )
         }
     )
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Remonte() {
+fun Remontee(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    Button(
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .size(
+                width = 380.dp,
+                height = 230.dp
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.powder_blue)
+        ),
         onClick = {
             val intent = Intent(context, RemonteActivity::class.java)
             context.startActivity(intent)
         },
-        colors = ButtonDefaults.buttonColors(
-            // containerColor = colorResource(R.color.alice_blue),
-            // contentColor = colorResource(R.color.dark_slate_blue)
-        ),
-        modifier = Modifier
-            .height(40.dp)
-            .width(250.dp)
-    ) {
-        Text("Remontés")
-    }
+        content = {
+            Image(
+                painter = painterResource(R.drawable.remontee_ski),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Text(
+                text = stringResource(R.string.remontee),
+                color = colorResource(R.color.gray),
+                modifier = Modifier.padding(7.dp)
+            )
+        }
+    )
 }
-
 
 @Composable
 fun MapButton() {
