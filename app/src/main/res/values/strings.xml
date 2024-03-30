@@ -3,5 +3,6 @@
     <string name="piste_name_template">%s</string>
     <string name="connexion">Connectez-vous</string>
     <string name="register">Créer un compte</string>
-    <string name="piste">Les pistes</string>
+    <string name="piste">\t Les pistes</string>
+    <string name="remontee">\t Les remontées</string>
 </resources>
