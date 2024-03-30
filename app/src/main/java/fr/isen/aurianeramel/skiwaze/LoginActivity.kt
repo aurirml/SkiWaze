@@ -114,7 +114,7 @@ class LoginActivity : ComponentActivity() {
     }
 
     fun reload() {
-        val intent = Intent(this, PisteActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
