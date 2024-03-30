@@ -161,6 +161,25 @@ fun PisteInfoContent(pisteId: Int) {
                         .size(24.dp)
                         .clickable {
                             val newStateState = !piste.state
+                            val newValue = 2 // Nouvelle valeur à ajouter
+                            val newValueReference = FirebaseDatabase.getInstance().getReference("Pistes/${piste.id - 1}/newField")
+
+                            newValueReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    // Vérifier si le champ existe déjà
+                                    if (!dataSnapshot.exists()) {
+                                        // Le champ n'existe pas, le créer et lui attribuer la nouvelle valeur
+                                        newValueReference.setValue(newValue)
+                                    } else {
+                                        // Le champ existe déjà, ne rien faire ou mettre à jour sa valeur si nécessaire
+                                        // Vous pouvez mettre à jour sa valeur en utilisant newValueReference.setValue(newValue)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Gérer les erreurs
+                                }
+                            })
                             FirebaseDatabase.getInstance().getReference("Pistes/${piste.id - 1}/state")
                                 .setValue(newStateState)
                             Toast.makeText(context, "State: $newStateState", Toast.LENGTH_SHORT).show()

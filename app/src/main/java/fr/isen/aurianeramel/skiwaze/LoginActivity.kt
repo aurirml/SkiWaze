@@ -42,6 +42,7 @@ class LoginActivity : ComponentActivity() {
         setContent {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
+            val username = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
 
@@ -50,6 +51,14 @@ class LoginActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                TextField(
+                    value = username.value,
+                    onValueChange = { username.value = it },
+                    label = { Text("Pseudo") },
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false
+                    )
+                )
                 TextField(
                     value = mail.value,
                     onValueChange = { mail.value = it },
