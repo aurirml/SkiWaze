@@ -40,7 +40,7 @@ class LoginActivity : ComponentActivity() {
         }
 
         setContent {
-            Background()
+            //Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
