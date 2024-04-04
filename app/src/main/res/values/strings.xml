@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">\t SkiWaze</string>
+    <string name="app_name">\t SkiWaze \t</string>
     <string name="piste_name_template">%s</string>
     <string name="connexion">Connectez-vous</string>
     <string name="register">Créer un compte</string>
