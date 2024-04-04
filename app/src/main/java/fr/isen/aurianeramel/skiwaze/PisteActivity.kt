@@ -95,7 +95,10 @@ fun Greeting2() {
                 Button(
                     onClick = {
                         val intent = Intent(context, PisteInfoActivity::class.java)
-                        intent.putExtra("pisteId", piste.id) // Envoyer l'identifiant de la piste à l'activité suivante
+                        intent.putExtra(
+                            "pisteId",
+                            piste.id
+                        ) // Envoyer l'identifiant de la piste à l'activité suivante
                         context.startActivity(intent)
                     },
                     colors = ButtonDefaults.buttonColors(
