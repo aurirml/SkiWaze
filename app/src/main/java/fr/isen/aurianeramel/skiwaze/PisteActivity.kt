@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,7 +29,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DownhillSkiing
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
@@ -62,29 +66,70 @@ class PisteActivity : ComponentActivity() {
         setContent {
 
             SkiWazeTheme {
+
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    // color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    PistesListe()
+                    val scrollState = rememberScrollState()
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(modifier = Modifier.padding(top = 16.dp)) {
+                            Icon(
+                                Icons.Filled.AcUnit,
+                                contentDescription = null,
+                                tint = colorResource(R.color.gray),
+                                modifier = Modifier.size(50.dp)
+                            )
+                            Text(
+                                text = stringResource(R.string.app_name),
+                                fontFamily = stg,
+                                fontSize = 40.sp,
+                                color = colorResource(R.color.gray),
+                                modifier = Modifier
+                            )
+                            Spacer(Modifier.height(40.dp))
+                            Icon(
+                                Icons.Filled.AcUnit,
+                                contentDescription = null,
+                                tint = colorResource(R.color.gray),
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(colorResource(R.color.nude))
+                                .border(
+                                    width = 2.dp,
+                                    color = colorResource(R.color.nude)
+                                ), // Ajouter la bordure autour de la Row
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = "Les pistes \t",
+                                fontFamily = stg,
+                                fontSize = 30.sp,
+                                color = colorResource(R.color.blue_gray),
+                                modifier = Modifier
+                            )
+
+                        }
+                    }
                 }
+                Background()
+                PistesListe()
             }
+
         }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
-    }
-
-    private fun navigateToActivity(route: String) {
-        val intent = when (route) {
-            "home" -> Intent(this, MainActivity::class.java)
-            "piste" -> Intent(this, PisteActivity::class.java)
-            "remonte" -> Intent(this, RemonteActivity::class.java)
-            "map" -> Intent(this, MapActivity::class.java)
-            else -> null
-        }
-        intent?.let {
-            startActivity(it)
-        }
     }
 }
 
@@ -116,48 +161,118 @@ fun PistesListe() {
     // Obtenir les données des pistes
     GetData(pistes)
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 100.dp)
     ) {
         Spacer(Modifier.height(20.dp))
-        Text(
-            text = stringResource(R.string.piste),
-            fontFamily = stg,
-            fontSize = 40.sp,
-            modifier = Modifier
-        )
         Spacer(Modifier.height(20.dp))
-        LazyColumn {
-            items(pistes.toList()) { piste ->
-                ElevatedCard(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 0.dp
-                    ),
-                    modifier = Modifier
-                        .size(
-                            width = 380.dp,
-                            height = 50.dp
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            /*Icon(
+                imageVector = Icons.Default.DownhillSkiing,
+                contentDescription = "Ouvert",
+                tint = colorResource(id = R.color.green), // Utilisation de la couleur verte pour "ouvert"
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(
+                text = "Ouvert",
+                color = colorResource(id = R.color.green), // Utilisation de la couleur verte pour "ouvert"
+                fontFamily = stg,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+
+            Icon(
+                imageVector = Icons.Default.ArrowOutward,
+                contentDescription = "Fermé",
+                tint = colorResource(id = R.color.red), // Utilisation de la couleur rouge pour "fermé"
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(
+                text = "Fermé",
+                color = colorResource(id = R.color.red), // Utilisation de la couleur rouge pour "fermé"
+                fontFamily = stg,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 4.dp)
+            )*/
+
+
+            Icon(
+                imageVector = Icons.Default.DownhillSkiing,
+                contentDescription = "Ouvert",
+                tint = colorResource(id = R.color.green), // Utilisation de la couleur verte pour "ouvert"
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(
+                text = "Ouvert",
+                color = colorResource(id = R.color.green),
+                fontFamily = stg,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(end = 20.dp)
+            )
+
+            Text(
+                text = "Fermé",
+                color = colorResource(id = R.color.red),
+                fontFamily = stg,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Fermé",
+                tint = colorResource(id = R.color.red), // Utilisation de la couleur rouge pour "fermé"
+                modifier = Modifier.size(24.dp)
+            )
+
+
+            LazyColumn {
+                items(pistes.toList()) { piste ->
+                    ElevatedCard(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 0.dp
                         ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = colorResource(R.color.powder_blue)
-                    ),
-                    onClick = {
-                        val intent = Intent(context, PisteInfoActivity::class.java)
-                        intent.putExtra(
-                            "pisteId",
-                            piste.id
-                        ) // Envoyer l'identifiant de la piste à l'activité suivante
-                        context.startActivity(intent)
-                    },
-                    content = {
-                        Text(piste.name)
-                        Row() {
-                            Text("La piste est actuellement ")
-                            if (piste.state) Text("ouverte")
-                            else Text("fermée")
-                            Spacer(Modifier.height(2.dp))
+                        modifier = Modifier
+                            .size(
+                                width = 380.dp,
+                                height = 50.dp
+                            ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = colorResource(R.color.powder_blue)
+                        ),
+                        onClick = {
+                            val intent = Intent(context, PisteInfoActivity::class.java)
+                            intent.putExtra(
+                                "pisteId",
+                                piste.id
+                            ) // Envoyer l'identifiant de la piste à l'activité suivante
+                            context.startActivity(intent)
+                        },
+                        content = {
+                            Row(
+                                horizontalArrangement = Arrangement.Center, // Centrer horizontalement le contenu
+                                modifier = Modifier.fillMaxWidth() // Prendre toute la largeur disponible
+                            ) {
+                                Text(piste.name)
+                                Row() {
+                                    Text("La piste est actuellement ")
+                                    if (piste.state) Text("ouverte")
+                                    else Text("fermée")
+                                    Spacer(Modifier.height(2.dp))
+                                }
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

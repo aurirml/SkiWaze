@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
 import androidx.compose.foundation.Image
@@ -17,7 +16,6 @@ import androidx.compose.foundation.background
 import androidx.compose.ui.res.colorResource
 import androidx.compose.material3.*
 import android.content.Intent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
@@ -28,23 +26,18 @@ import com.google.firebase.ktx.Firebase
 import fr.isen.aurianeramel.skiwaze.ui.theme.stg
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.compose.rememberNavController
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.style.TextAlign
+import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
 
 
 class MainActivity : ComponentActivity() {
@@ -75,82 +68,124 @@ class MainActivity : ComponentActivity() {
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Row(modifier = Modifier.padding(top = 16.dp)) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(top = 16.dp, bottom = 5.dp)
+                            ) {
                                 Icon(
                                     Icons.Filled.AcUnit,
                                     contentDescription = null,
-                                    tint = colorResource(R.color.gray),
-                                    modifier = Modifier.size(50.dp)
+                                    tint = colorResource(R.color.bright_gray),
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .padding(top = 5.dp)
                                 )
                                 Text(
                                     text = stringResource(R.string.app_name),
                                     fontFamily = stg,
-                                    fontSize = 40.sp,
-                                    color = colorResource(R.color.gray),
+                                    fontSize = 60.sp,
+                                    color = colorResource(R.color.bright_gray),
                                     modifier = Modifier
                                 )
                                 Spacer(Modifier.height(40.dp))
                                 Icon(
                                     Icons.Filled.AcUnit,
                                     contentDescription = null,
-                                    tint = colorResource(R.color.gray),
-                                    modifier = Modifier.size(50.dp)
+                                    tint = colorResource(R.color.bright_gray),
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .padding(top = 5.dp)
                                 )
                             }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(colorResource(R.color.nude))
-                                    .border(
-                                        width = 2.dp,
-                                        color = colorResource(R.color.nude)
-                                    ), // Ajouter la bordure autour de la Row
-                                horizontalArrangement = Arrangement.Center,
+                                    .border(width = 2.dp, color = colorResource(R.color.nude)),
+                                horizontalArrangement = Arrangement.SpaceBetween, // Espacement égal entre les éléments
+                                verticalAlignment = Alignment.CenterVertically // Aligner les éléments verticalement au centre
                             ) {
-                                Text(
-                                    text = "Bienvenue \t",
-                                    fontFamily = stg,
-                                    fontSize = 30.sp,
-                                    color = colorResource(R.color.blue_gray),
-                                    modifier = Modifier
-                                )
-                                auth.currentUser?.displayName?.let {
+                                Row {}
+                                Row(
+                                    modifier = Modifier.padding(start = 50.dp),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically // Aligner les éléments verticalement au centre
+                                ) {
                                     Text(
-                                        text = it,
+                                        text = "Bienvenue \t",
                                         fontFamily = stg,
-                                        color = colorResource(R.color.blue_gray),
-                                        fontSize = 30.sp
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 40.sp,
+                                        color = colorResource(R.color.blue_gray)
                                     )
+                                    auth.currentUser?.displayName?.let {
+                                        Text(
+                                            text = it,
+                                            fontFamily = stg,
+                                            textAlign = TextAlign.Center,
+                                            color = colorResource(R.color.blue_gray),
+                                            fontSize = 40.sp
+                                        )
+                                    }
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically // Aligner les éléments verticalement au centre
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            Firebase.auth.signOut()
+                                            reload()
+                                        },
+                                        modifier = Modifier
+                                            .size(70.dp)
+                                            .padding(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                                            tint = colorResource(R.color.blue_gray),
+                                            contentDescription = null
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
-                                horizontalArrangement = Arrangement.spacedBy(30.dp),
-                                verticalArrangement = Arrangement.spacedBy(30.dp),
-                                modifier = Modifier.widthIn(max = 325.dp)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(70.dp)
+                                    .background(color = colorResource(R.color.water)),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                item {
-                                    Piste()
-                                }
-                                item {
-                                    Remontee()
-                                }
-                                item {
-                                    Piste()
-                                }
-                                item {
-                                    Remontee()
+                                WeatherScreen()
+                            }
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(2),
+                                    horizontalArrangement = Arrangement.spacedBy(50.dp),
+                                    verticalArrangement = Arrangement.spacedBy(30.dp),
+                                    modifier = Modifier
+                                        .widthIn(max = 350.dp)
+                                        .height(400.dp)
+                                        .padding(top = 50.dp)
+                                ) {
+                                    item {
+                                        Piste()
+                                    }
+                                    item {
+                                        Remontee()
+                                    }
+                                    item {
+                                        Piste()
+                                    }
+                                    item {
+                                        Remontee()
+                                    }
                                 }
                             }
                         }
-
-                        Column(verticalArrangement = Arrangement.Bottom) {
-                            deco()
-                        }
-
                     } else {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -268,8 +303,7 @@ fun Register() {
             context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.medium_grey),
-            // contentColor = colorResource(R.color.dark_slate_blue)
+            containerColor = colorResource(R.color.medium_grey)
         ),
         modifier = Modifier
             .height(45.dp)
@@ -308,7 +342,9 @@ fun Piste(modifier: Modifier = Modifier) {
             )
             Text(
                 text = stringResource(R.string.piste),
-                color = colorResource(R.color.gray),
+                fontFamily = comic_sans,
+                color = colorResource(R.color.black),
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(4.dp)
             )
         }
@@ -344,7 +380,9 @@ fun Remontee(modifier: Modifier = Modifier) {
             )
             Text(
                 text = stringResource(R.string.remontee),
-                color = colorResource(R.color.gray),
+                color = colorResource(R.color.black),
+                fontFamily = comic_sans,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(7.dp)
             )
         }
@@ -368,3 +406,54 @@ fun MapButton() {
         Text("Map")
     }
 }
+
+@Composable
+fun WeatherScreen(modifier: Modifier = Modifier) {
+    val weather = remember { getWeatherForToday() }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.sunny),
+            contentDescription = null,
+            modifier = Modifier
+                .size(60.dp)
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(start = 30.dp)) {
+            if (weather != null) {
+                Text(
+                    text = "Température: ${weather.temperature}°C",
+                    fontFamily = comic_sans,
+                    fontSize = 15.sp,
+                )
+                Text(
+                    text = "Humidité: ${weather.humidity}%",
+                    fontFamily = comic_sans,
+                    fontSize = 15.sp
+                )
+                // Ajoutez d'autres détails météorologiques si nécessaire
+            } else {
+                Text(
+                    text = "Impossible de charger les données météorologiques",
+                    fontSize = 15.sp
+                )
+            }
+        }
+
+    }
+}
+
+// Fonction factice pour obtenir les données météorologiques du jour
+fun getWeatherForToday(): Weather? {
+    // Ici, vous devriez faire un appel à une API météo pour récupérer les données
+    // Pour cet exemple, nous allons simplement retourner des données factices
+    return Weather(25, 60) // Température: 25°C, Humidité: 60%
+}
+
+// Modèle pour représenter les données météorologiques
+data class Weather(val temperature: Int, val humidity: Int)
