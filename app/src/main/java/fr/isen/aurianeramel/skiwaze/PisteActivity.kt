@@ -60,7 +60,6 @@ class PisteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             SkiWazeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -115,6 +114,30 @@ fun PistesListe() {
     val context = LocalContext.current
     // Obtenir les données des pistes
     GetData(pistes)
+
+    LazyColumn {
+        items(pistes.toList()) { piste ->
+            Column {
+                Button(
+                    onClick = {
+                        val intent = Intent(context, PisteInfoActivity::class.java)
+                        intent.putExtra(
+                            "pisteId",
+                            piste.id
+                        ) // Envoyer l'identifiant de la piste à l'activité suivante
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.alice_blue),
+                        contentColor = colorResource(R.color.dark_slate_blue)
+                    )
+                ) {
+                    Text(piste.name)
+                }
+            }
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -162,6 +185,7 @@ fun PistesListe() {
         }
     }
 }
+
 
 
 /*@Composable
