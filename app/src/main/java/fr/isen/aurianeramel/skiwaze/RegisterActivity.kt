@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.userProfileChangeRequest
 import fr.isen.aurianeramel.skiwaze.database.User
@@ -53,6 +57,10 @@ class RegisterActivity : ComponentActivity() {
         }
 
         setContent {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                // color = MaterialTheme.colorScheme.background
+            ) {
             Background()
             val mail = remember { mutableStateOf(TextFieldValue("")) }
             val password = remember { mutableStateOf(TextFieldValue("")) }
@@ -64,6 +72,17 @@ class RegisterActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Greeting(modifier = Modifier.padding(bottom = 20.dp))
+
+                Image(
+                    painter = painterResource(id = R.drawable.skiwaze_logo),
+                    contentDescription = "Logo Skiwaze",
+                    modifier = Modifier
+                        .size(200.dp) // Modifier la taille selon vos besoins
+                        .padding(bottom = 20.dp), // Ajouter un padding pour l'espacement
+                    contentScale = ContentScale.Fit
+                )
+
                 TextField(
                     value = username.value,
                     onValueChange = { username.value = it },
@@ -114,12 +133,19 @@ class RegisterActivity : ComponentActivity() {
                         }
                     }
                 )
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(20.dp))
                 Button(
-                    onClick = { addUser(mail.value.text, password.value.text, username.value.text) }
+                    onClick = { addUser(mail.value.text, password.value.text, username.value.text) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.medium_grey) // Couleur de fond du bouton
+                    ),
+                    modifier = Modifier
+                        .height(55.dp) // Hauteur du bouton
+                        .width(280.dp) // Largeur du bouton
                 ) {
                     Text("Créer un compte")
                 }
+
                 Spacer(Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -129,6 +155,7 @@ class RegisterActivity : ComponentActivity() {
                 }
             }
         }
+            }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 
@@ -168,11 +195,15 @@ class RegisterActivity : ComponentActivity() {
 @Composable
 fun signIn() {
     val context = LocalContext.current
+    val buttonColors = ButtonDefaults.textButtonColors(
+        contentColor = colorResource(R.color.medium_grey) // Couleur du texte
+    )
     TextButton(
         onClick = {
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
-        }
+        },
+        colors = buttonColors
     ) {
         Text("Se connecter.")
     }

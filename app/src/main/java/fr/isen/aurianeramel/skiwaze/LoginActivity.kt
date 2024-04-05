@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.compose.ui.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +28,10 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 
 class LoginActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -46,11 +52,11 @@ class LoginActivity : ComponentActivity() {
             val password = remember { mutableStateOf(TextFieldValue("")) }
             var showPassword by remember { mutableStateOf(false) }
 
-            Column(
+            Surface(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                // color = MaterialTheme.colorScheme.background
             ) {
+
                 TextField(
                     value = username.value,
                     onValueChange = { username.value = it },
@@ -98,7 +104,7 @@ class LoginActivity : ComponentActivity() {
                 )
                 Button(
                     onClick = { signIn(mail.value.text, password.value.text) }
-                ){
+                ) {
                     Text("Se connecter")
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -107,13 +113,101 @@ class LoginActivity : ComponentActivity() {
                     )
                     createAccount()
 
+                    Background()
+
+
+                    val mail = remember { mutableStateOf(TextFieldValue("")) }
+                    val password = remember { mutableStateOf(TextFieldValue("")) }
+                    var showPassword by remember { mutableStateOf(false) }
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+
+                    ) {
+                        Greeting(modifier = Modifier.padding(bottom = 20.dp))
+
+                        Image(
+                            painter = painterResource(id = R.drawable.skiwaze_logo),
+                            contentDescription = "Logo Skiwaze",
+                            modifier = Modifier
+                                .size(200.dp) // Modifier la taille selon vos besoins
+                                .padding(bottom = 20.dp), // Ajouter un padding pour l'espacement
+                            contentScale = ContentScale.Fit
+                        )
+
+                        TextField(
+                            value = mail.value,
+                            onValueChange = { mail.value = it },
+                            label = { Text("Adresse mail") },
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.None,
+                                autoCorrect = false,
+                                keyboardType = KeyboardType.Email
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        TextField(
+                            value = password.value,
+                            onValueChange = { password.value = it },
+                            label = { Text("Mot de passe") },
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.None,
+                                autoCorrect = false,
+                                keyboardType = KeyboardType.Password
+                            ),
+                            trailingIcon = {
+                                val passwordIcon = if (showPassword) {
+                                    Icons.Default.Visibility
+                                } else {
+                                    Icons.Default.VisibilityOff
+                                }
+                                val description = if (showPassword) {
+                                    "Hide Password"
+                                } else {
+                                    "Show Password"
+                                }
+                                IconButton(onClick = { showPassword = !showPassword }) {
+                                    Icon(
+                                        imageVector = passwordIcon,
+                                        contentDescription = description
+                                    )
+                                }
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Button(
+                            onClick = { signIn(mail.value.text, password.value.text) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.medium_grey)
+                            ),
+                            modifier = Modifier
+                                .height(55.dp)
+                                .width(280.dp)
+                        ) {
+                            Text("Se connecter")
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Pas de compte ?"
+                            )
+                            createAccount()
+
+                        }
+                    }
                 }
             }
+            Log.d("lifeCycle", "Menu Activity - OnCreate")
         }
-        Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 
-    fun reload() {
+
+fun reload() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
@@ -142,11 +236,17 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun createAccount(){
     val context = LocalContext.current
+    val buttonColors = ButtonDefaults.textButtonColors(
+        contentColor = colorResource(R.color.medium_grey) // Couleur du texte
+    )
     TextButton(
         onClick = {
             val intent = Intent(context, RegisterActivity::class.java)
-            context.startActivity(intent) }
+            context.startActivity(intent) },
+        colors = buttonColors
     ) {
         Text("En créer un.")
     }
 }
+
+
