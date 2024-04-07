@@ -296,7 +296,7 @@ fun ChatAffiche() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         androidx.compose.material3.Text(
-            text = "Commentaires",
+            text = "Chat",
             fontFamily = stg,
             fontSize = 30.sp,
             color = colorResource(R.color.blue_gray),
@@ -324,16 +324,17 @@ fun ChatAffiche() {
 
 @Composable
 fun Chatlist() {
+    val auth: FirebaseAuth = Firebase.auth
+    val userName = auth.currentUser?.displayName
     val chat = remember {
         mutableStateListOf<Chat>()
     }
     LaPorte(chat)
-    //GetChat(chat)
-        LazyRow(horizontalArrangement = Arrangement.Center) {
+        LazyColumn {
             items(chat){ chat ->
-                Row(horizontalArrangement = Arrangement.Center) {
+                Column {
                     Card(
-                        shape = RoundedCornerShape(0.dp),
+                        shape = RoundedCornerShape(20.dp),
                         modifier = Modifier
                             .width(180.dp)
                             .height(80.dp),
@@ -346,19 +347,19 @@ fun Chatlist() {
                                 .verticalScroll(rememberScrollState())
                                 .padding(start = 5.dp)
                         ) {
-                            androidx.compose.material3.Text(
-                                text = chat.user_id,
-                                fontFamily = comic_sans
-                            )
-                            androidx.compose.material3.Text(
-                                text = chat.date,
-                                fontFamily = comic_sans
-                            )
-                            androidx.compose.material3.Text(
-                                text = chat.content,
-                                fontFamily = comic_sans
-                            )
-                            Spacer(Modifier.width(10.dp))
+                                androidx.compose.material3.Text(
+                                    text = chat.user_id,
+                                    fontFamily = comic_sans,
+                                )
+                                androidx.compose.material3.Text(
+                                    text = chat.date,
+                                    fontFamily = comic_sans,
+                                )
+                                androidx.compose.material3.Text(
+                                    text = chat.content,
+                                    fontFamily = comic_sans,
+                                )
+                                Spacer(Modifier.width(10.dp))
                         }
                     }
                     Spacer(Modifier.width(10.dp))
