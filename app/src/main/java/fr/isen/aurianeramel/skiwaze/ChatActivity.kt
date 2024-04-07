@@ -147,22 +147,6 @@ fun GetChat(com: SnapshotStateList<Chat>) {
         })
 }
 
-@Composable
-fun ChatPage() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Text(
-            text = "Je sais pas ce que tu veux que je mette ici, mais au moins, la page existe",
-            fontSize = 40.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCHAT(onClose: () -> Unit) {
@@ -343,7 +327,8 @@ fun Chatlist() {
     val chat = remember {
         mutableStateListOf<Chat>()
     }
-    GetChat(chat)
+    LaPorte(chat)
+    //GetChat(chat)
         LazyRow(horizontalArrangement = Arrangement.Center) {
             items(chat){ chat ->
                 Row(horizontalArrangement = Arrangement.Center) {
@@ -381,3 +366,27 @@ fun Chatlist() {
             }
         }
     }
+
+fun LaPorte(chat: MutableList<Chat>) {
+    val database = FirebaseDatabase.getInstance()
+    val chatRef = database.getReference("Chat")
+
+    chatRef.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            val chats = mutableListOf<Chat>()
+            for (snapshot in dataSnapshot.children) {
+                val chat = snapshot.getValue(Chat::class.java)
+                chat?.let { chats.add(it) }
+            }
+            chat.clear()
+            chat.addAll(chats)
+
+            // Ne plus appeler GetChat ici, car la liste de chat est mise à jour directement
+            // GetChat(com)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            println("Error: ${databaseError.message}")
+        }
+    })
+}
