@@ -6,12 +6,9 @@ import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,36 +24,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.aurianeramel.skiwaze.database.Pistes
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AcUnit
-import androidx.compose.material.icons.filled.ArrowOutward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DownhillSkiing
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.outlined.ArrowOutward
-import androidx.compose.material.icons.outlined.DownhillSkiing
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.rememberNavController
 import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
 import fr.isen.aurianeramel.skiwaze.ui.theme.stg
 
@@ -242,4 +219,3 @@ fun PistesListe() {
         }
     }
 }
-
