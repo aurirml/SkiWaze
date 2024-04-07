@@ -95,6 +95,7 @@ class LoginActivity : ComponentActivity() {
                             autoCorrect = false,
                             keyboardType = KeyboardType.Password
                         ),
+                        maxLines = 1,
                         trailingIcon = {
                             val passwordIcon = if (showPassword) {
                                 Icons.Default.Visibility
