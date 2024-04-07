@@ -14,9 +14,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -33,6 +35,7 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +50,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
+import fr.isen.aurianeramel.skiwaze.database.Comment
 import fr.isen.aurianeramel.skiwaze.ui.theme.BluePiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.GreenPiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.Purple40
@@ -95,6 +99,7 @@ class PisteInfoActivity : ComponentActivity() {
                                         modifier = Modifier
                                     )
                                 }
+                                ComListe2(id = pisteId)
                                 PisteInfoContent(pisteId)
                             }
                         }
@@ -304,7 +309,7 @@ fun PisteInfoContent(pisteId: Int) {
             }
             Comment(pisteId)
             Spacer(modifier = Modifier.height(20.dp))
-            ShowComment(userName, pisteId)
+
         }
     }
 }
@@ -518,37 +523,37 @@ fun AddComment(onClose: () -> Unit, pisteId: Int) {
                 }
                 Button(
                     onClick = {
-
-                        val baseReference = FirebaseDatabase.getInstance()
-                            .getReference("Comment/${userName}/${piste.id - 1}")
+                        val baseReference = FirebaseDatabase.getInstance().getReference("Comment")
 
                         baseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 var i = 1 // Initialiser un compteur pour les commentaires
-                                var newReference: DatabaseReference? =
-                                    null // Référence pour le nouveau commentaire
+                                var newReference: DatabaseReference? = null // Référence pour le nouveau commentaire
 
                                 // Parcourir les enfants pour trouver un nœud disponible
-                                while (dataSnapshot.hasChild("comment$i")) {
+                                while (dataSnapshot.hasChild("$i")) {
                                     i++
                                 }
 
                                 // Créer une nouvelle référence pour le nouveau commentaire
-                                val commentReference = baseReference.child("comment$i")
+                                val commentReference = baseReference.child("$i")
                                 val contentReference = commentReference.child("content")
                                 val dateReference = commentReference.child("date")
+                                val userReference = commentReference.child("user_id")
+                                val pisteReference = commentReference.child("piste_id")
 
                                 // Obtenir la date actuelle
                                 val currentDate = Date()
 
                                 // Créer un formateur de date avec le format souhaité
-                                val dateFormat =
-                                    SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRENCH)
+                                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRENCH)
                                 dateFormat.timeZone = TimeZone.getTimeZone("Europe/Paris")
                                 // Formater la date actuelle en utilisant le formateur de date
                                 val formattedTime = dateFormat.format(currentDate)
 
                                 // Écrire le nouveau commentaire et sa date
+                                userReference.setValue(userName)
+                                pisteReference.setValue(pisteId)
                                 contentReference.setValue(commentaireText)
                                     .addOnSuccessListener {
                                         // Réinitialiser le champ de texte du commentaire
@@ -576,6 +581,8 @@ fun AddComment(onClose: () -> Unit, pisteId: Int) {
                         })
 
 
+
+
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.alice_blue),
@@ -589,46 +596,6 @@ fun AddComment(onClose: () -> Unit, pisteId: Int) {
     }
 }
 
-@Composable
-fun ShowComment(userName: String?, pisteId: Int) {
-    val commentsReference =
-        FirebaseDatabase.getInstance().getReference("Comment/$userName/$pisteId")
-    var commentText by remember { mutableStateOf("") }
-
-
-    // Récupérer les commentaires de la base de données
-    LaunchedEffect(key1 = commentsReference) {
-        val comments = mutableListOf<String>()
-        commentsReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (commentSnapshot in dataSnapshot.children) {
-                    val commentId = commentSnapshot.key
-                    val commentContent =
-                        commentSnapshot.child("content").getValue(String::class.java)
-                    val commentDate = commentSnapshot.child("date").getValue(Date::class.java)
-
-                    // Ajouter les informations du commentaire à la liste des commentaires
-                    val commentInfo =
-                        "Commentaire ID: $commentId, Contenu: $commentContent, Date et heure: $commentDate"
-                    comments.add(commentInfo)
-
-                    // Afficher les informations du commentaire dans le logcat
-                    Log.d("Commentaires", commentInfo)
-                }
-                // Convertir la liste des commentaires en une seule chaîne
-                commentText = comments.joinToString("\n")
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Gérer les erreurs d'annulation éventuelles
-                Log.e("Firebase", "Database error: $databaseError")
-            }
-        })
-    }
-
-    // Afficher les commentaires dans un composant Text
-    Text(text = commentText)
-}
 
 
 fun getPisteById(pisteId: Int, callback: (Pistes?) -> Unit) {
@@ -656,26 +623,6 @@ fun getPisteById(pisteId: Int, callback: (Pistes?) -> Unit) {
     })
 }
 
-@Composable
-fun getcomdata(pisteee: SnapshotStateList<Pistes>) {
-    val auth: FirebaseAuth = Firebase.auth
-    val currentUser = auth.currentUser
-    val userName = auth.currentUser?.displayName
-    Log.d("database", "a")
-    DataBaseHelper.database.getReference("Comment/$userName/")
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("database", "b")
-                val _Pistes = snapshot.children.mapNotNull { it.getValue(Pistes::class.java) }
-                Log.d("database", pisteee.toString())
-                pisteee.addAll(_Pistes)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("dataBase", error.toString())
-            }
-        })
-}
 
 // Définissez votre énumération CouleurPiste ici
 enum class CouleurPiste(val value: Int) {
@@ -700,4 +647,56 @@ class Couleurs {
     val vert: Color = GreenPiste
     val bleu: Color = BluePiste
     val noir: Color = Color.Black
+}
+
+@Composable
+fun GetCom(com : SnapshotStateList<Comment>) {
+    Log.d("database", "carré")
+    DataBaseHelper.database.getReference("Comment")
+        .addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                Log.d("database", "b")
+                val _com = snapshot.children.mapNotNull { it.getValue(Comment::class.java) }
+                Log.d("database", com.toString())
+                com.addAll(_com)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("dataBase", error.toString())
+            }
+        })
+}
+
+@Composable
+fun ComListe(id : Int) {
+    val com = remember {
+        mutableStateListOf<Comment>()
+    }
+    GetCom(com)
+    LazyColumn {
+        items(com.toList()) { com ->
+            Column {
+                if(com.piste_id==id) {
+                    Text(com.user_id +" : "+com.content)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ComListe2(id : Int) {
+    val com = remember {
+        mutableStateListOf<Comment>()
+    }
+    GetCom(com)
+    Log.d("com", "ca marche ?")
+
+    LazyColumn {
+        items(com.filter { it.piste_id == id }) { com ->
+            Column {
+                Text(com.user_id +" : "+com.content)
+            }
+        }
+    }
 }
