@@ -1,57 +1,59 @@
 package fr.isen.aurianeramel.skiwaze
+
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import fr.isen.aurianeramel.skiwaze.Background
-import fr.isen.aurianeramel.skiwaze.Connexion
-import fr.isen.aurianeramel.skiwaze.Greeting
-import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import fr.isen.aurianeramel.skiwaze.database.Pistes
-import fr.isen.aurianeramel.skiwaze.database.Comment
-
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DownhillSkiing
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import fr.isen.aurianeramel.skiwaze.database.Remontees
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
 import com.google.firebase.database.FirebaseDatabase
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
+import fr.isen.aurianeramel.skiwaze.ui.theme.BluePiste
+import fr.isen.aurianeramel.skiwaze.ui.theme.GreenPiste
+import fr.isen.aurianeramel.skiwaze.ui.theme.Purple40
+import fr.isen.aurianeramel.skiwaze.ui.theme.RedPiste
+import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
+import fr.isen.aurianeramel.skiwaze.ui.theme.stg
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -66,7 +68,36 @@ class PisteInfoActivity : ComponentActivity() {
             getPisteById(pisteId) { piste ->
                 if (piste != null) {
                     setContent {
-                        PisteInfoContent(pisteId)
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            // color = MaterialTheme.colorScheme.background
+                        ) {
+                            Background()
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                TopBar()
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(colorResource(R.color.bright_gray))
+                                        .border(
+                                            width = 2.dp,
+                                            color = colorResource(R.color.bright_gray)
+                                        ),
+                                    horizontalArrangement = Arrangement.Center,
+                                ) {
+                                    Text(
+                                        text = "Les pistes",
+                                        fontFamily = stg,
+                                        fontSize = 30.sp,
+                                        color = colorResource(R.color.blue_gray),
+                                        modifier = Modifier
+                                    )
+                                }
+                                PisteInfoContent(pisteId)
+                            }
+                        }
                     }
                 } else {
                     // La piste n'a pas été trouvée, gérer l'erreur
@@ -91,7 +122,6 @@ fun PisteInfoContent(pisteId: Int) {
     // Créez un état mutable pour stocker les informations de la piste
     val pisteState = remember { mutableStateOf<Pistes?>(null) }
     val auth: FirebaseAuth = Firebase.auth
-    val currentUser = auth.currentUser
     val userName = auth.currentUser?.displayName
     // Utilisez une coroutine pour exécuter la fonction getPisteById
     LaunchedEffect(pisteId) {
@@ -104,21 +134,88 @@ fun PisteInfoContent(pisteId: Int) {
     pisteState.value?.let { piste ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .padding(4.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("${piste.name}")
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Piste ${CouleurPiste.fromValue(piste.color)}")
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Frequentation : ${piste.frequence}")
-            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                border = BorderStroke(1.dp, colorResource(R.color.water)),
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(50.dp)
+                    .padding(top = 10.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+
+                ) {
+                    //juste pour faire beau dans la card
+                    Row {
+                        Text("\t \t")
+                    }
+                    Text(
+                        text = piste.name,
+                        fontFamily = comic_sans,
+                        fontSize = 20.sp
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.padding(end = 20.dp)
+                    ) {
+                        if (piste.state) {
+                            Icon(
+                                imageVector = Icons.Default.DownhillSkiing,
+                                contentDescription = "Ouvert",
+                                tint = colorResource(R.color.medium_green),
+                                modifier = Modifier.size(28.dp)
+                            )
+                        } else {
+                            Icon(
+                                Icons.Filled.Close,
+                                contentDescription = null,
+                                tint = colorResource(R.color.red),
+                                modifier = Modifier
+                                    .size(28.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(50.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp),
+                    modifier = Modifier
+                        .widthIn(max = 300.dp)
+                        .height(400.dp)
+                        .padding(top = 50.dp)
+                ) {
+                    item {
+                        Couleur(pisteId)
+                    }
+                    item {
+                        Frequentation(pisteId)
+                    }/*
+                    item {
+                        Avalanche()
+                    }
+                    item {
+                        Damne()
+                    }*/
+                }
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if(piste.damne)Text("La piste est damnée")
+                if (piste.damne) Text("La piste est damnée")
                 else Text("La piste n'est pas damnée")
                 Spacer(modifier = Modifier.width(8.dp)) // Ajouter un espace entre le texte et l'icône du bouton
                 Icon(
@@ -176,7 +273,7 @@ fun PisteInfoContent(pisteId: Int) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if(piste.state)Text("La piste est ouverte")
+                if (piste.state) Text("La piste est ouverte")
                 else Text("La piste est fermée")
                 Spacer(modifier = Modifier.width(8.dp)) // Ajouter un espace entre le texte et l'icône du bouton
                 Icon(
@@ -187,7 +284,6 @@ fun PisteInfoContent(pisteId: Int) {
                         .clickable {
 
                             val newStateState = !piste.state
-
 
                             FirebaseDatabase
                                 .getInstance()
@@ -208,8 +304,137 @@ fun PisteInfoContent(pisteId: Int) {
             }
             Comment(pisteId)
             Spacer(modifier = Modifier.height(20.dp))
-            ShowComment(userName,pisteId)
+            ShowComment(userName, pisteId)
         }
+    }
+}
+
+@Composable
+fun Couleur(pisteId: Int) {
+    val pisteState = remember { mutableStateOf<Pistes?>(null) }
+    LaunchedEffect(pisteId) {
+        getPisteById(pisteId) { piste ->
+            pisteState.value = piste
+        }
+    }
+
+    val couleurs = Couleurs()
+
+    val couleurBox = when (val piste = pisteState.value) {
+        is Pistes -> {
+            val couleurPiste = CouleurPiste.fromValue(piste.color)
+            convertirEnCouleurGraphique(couleurPiste, couleurs)
+        }
+
+        else -> null
+    }
+
+    Card(modifier = Modifier.size(120.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Texte au-dessus
+            Text(
+                text = "Type de piste",
+                textAlign = TextAlign.Center,
+                fontFamily = comic_sans,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+
+            // Couleur en dessous
+            couleurBox?.let { color ->
+                Box(
+                    modifier = Modifier
+                        .size(250.dp)
+                        .background(color)
+                ) {}
+            }
+        }
+    }
+}
+
+@Composable
+fun Frequentation(pisteId: Int) {
+    var freq: Int? by remember { mutableStateOf(null) }
+
+    // Récupérer la fréquence depuis Firebase Realtime Database
+    val databaseReference = FirebaseDatabase.getInstance().getReference("Pistes/${pisteId}/frequence")
+    val valueEventListener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            freq = snapshot.getValue(Int::class.java)
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            // Gérer les erreurs ici
+        }
+    }
+
+    LaunchedEffect(pisteId) {
+        databaseReference.addValueEventListener(valueEventListener)
+    }
+
+    Card(
+        modifier = Modifier.size(120.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround) {
+            Text(
+                text = "Fréquentation",
+                fontFamily = comic_sans,
+                fontSize = 18.sp
+            )
+            freq?.let { // Vérifiez si freq n'est pas null
+                Text(
+                    text = "$it",
+                    fontFamily = comic_sans,
+                    fontSize = 30.sp
+                )
+            }
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Remove,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            freq?.let { currentFreq ->
+                                if (currentFreq > 1) {
+                                    databaseReference.setValue(currentFreq - 1)
+                                }
+                            }
+                        }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable {
+                            freq?.let { currentFreq ->
+                                if (currentFreq < 10) {
+                                    databaseReference.setValue(currentFreq + 1)
+                                }
+                            }
+                        }
+                )
+            }
+        }
+    }
+}
+
+private fun convertirEnCouleurGraphique(couleurPiste: CouleurPiste, couleurs: Couleurs): Color? {
+    return when (couleurPiste) {
+        CouleurPiste.verte -> couleurs.vert
+        CouleurPiste.bleue -> couleurs.bleu
+        CouleurPiste.rouge -> couleurs.rouge
+        CouleurPiste.noire -> couleurs.noir
+        else -> null
     }
 }
 
@@ -233,27 +458,26 @@ fun Comment(pisteId: Int) {
             modifier = Modifier
                 .height(40.dp)
                 .width(250.dp)
-        ){
+        ) {
             Text("Ajouter un commentaire")
         }
         Spacer(modifier = Modifier.height(16.dp))
         if (showComment) {
-            AddComment(onClose = { showComment = false }, pisteId) // Passer la fonction onClose pour fermer l'onglet du commentaire
+            AddComment(
+                onClose = { showComment = false },
+                pisteId
+            ) // Passer la fonction onClose pour fermer l'onglet du commentaire
         }
     }
 }
 
 @Composable
-fun AddComment(onClose: () -> Unit, pisteId: Int){
+fun AddComment(onClose: () -> Unit, pisteId: Int) {
     val auth: FirebaseAuth = Firebase.auth
-    val currentUser = auth.currentUser
     val userName = auth.currentUser?.displayName
     Log.d("auth", userName ?: "")
     val context = LocalContext.current
-
-
     val pisteState = remember { mutableStateOf<Pistes?>(null) }
-
 
     LaunchedEffect(pisteId) {
         getPisteById(pisteId) { piste ->
@@ -295,12 +519,14 @@ fun AddComment(onClose: () -> Unit, pisteId: Int){
                 Button(
                     onClick = {
 
-                        val baseReference = FirebaseDatabase.getInstance().getReference("Comment/${userName}/${piste.id - 1}")
+                        val baseReference = FirebaseDatabase.getInstance()
+                            .getReference("Comment/${userName}/${piste.id - 1}")
 
                         baseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 var i = 1 // Initialiser un compteur pour les commentaires
-                                var newReference: DatabaseReference? = null // Référence pour le nouveau commentaire
+                                var newReference: DatabaseReference? =
+                                    null // Référence pour le nouveau commentaire
 
                                 // Parcourir les enfants pour trouver un nœud disponible
                                 while (dataSnapshot.hasChild("comment$i")) {
@@ -316,7 +542,8 @@ fun AddComment(onClose: () -> Unit, pisteId: Int){
                                 val currentDate = Date()
 
                                 // Créer un formateur de date avec le format souhaité
-                                val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRENCH)
+                                val dateFormat =
+                                    SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRENCH)
                                 dateFormat.timeZone = TimeZone.getTimeZone("Europe/Paris")
                                 // Formater la date actuelle en utilisant le formateur de date
                                 val formattedTime = dateFormat.format(currentDate)
@@ -349,7 +576,6 @@ fun AddComment(onClose: () -> Unit, pisteId: Int){
                         })
 
 
-
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.alice_blue),
@@ -365,7 +591,8 @@ fun AddComment(onClose: () -> Unit, pisteId: Int){
 
 @Composable
 fun ShowComment(userName: String?, pisteId: Int) {
-    val commentsReference = FirebaseDatabase.getInstance().getReference("Comment/$userName/$pisteId")
+    val commentsReference =
+        FirebaseDatabase.getInstance().getReference("Comment/$userName/$pisteId")
     var commentText by remember { mutableStateOf("") }
 
 
@@ -376,11 +603,13 @@ fun ShowComment(userName: String?, pisteId: Int) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (commentSnapshot in dataSnapshot.children) {
                     val commentId = commentSnapshot.key
-                    val commentContent = commentSnapshot.child("content").getValue(String::class.java)
+                    val commentContent =
+                        commentSnapshot.child("content").getValue(String::class.java)
                     val commentDate = commentSnapshot.child("date").getValue(Date::class.java)
 
                     // Ajouter les informations du commentaire à la liste des commentaires
-                    val commentInfo = "Commentaire ID: $commentId, Contenu: $commentContent, Date et heure: $commentDate"
+                    val commentInfo =
+                        "Commentaire ID: $commentId, Contenu: $commentContent, Date et heure: $commentDate"
                     comments.add(commentInfo)
 
                     // Afficher les informations du commentaire dans le logcat
@@ -441,11 +670,12 @@ fun getcomdata(pisteee: SnapshotStateList<Pistes>) {
                 Log.d("database", pisteee.toString())
                 pisteee.addAll(_Pistes)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.e("dataBase", error.toString())
             }
         })
-} 
+}
 
 // Définissez votre énumération CouleurPiste ici
 enum class CouleurPiste(val value: Int) {
@@ -462,4 +692,12 @@ enum class CouleurPiste(val value: Int) {
             return values().find { it.value == value } ?: raquettes
         }
     }
+}
+
+
+class Couleurs {
+    val rouge: Color = RedPiste
+    val vert: Color = GreenPiste
+    val bleu: Color = BluePiste
+    val noir: Color = Color.Black
 }

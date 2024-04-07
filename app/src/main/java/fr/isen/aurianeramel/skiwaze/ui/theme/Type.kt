@@ -39,6 +39,6 @@ val stg = FontFamily(
     Font(R.font.something_in_the_cloud)
 )
 
-val hand_marker = FontFamily(
-    Font(R.font.hand_marker)
+val comic_sans = FontFamily(
+    Font(R.font.comic_sans)
 )

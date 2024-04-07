@@ -147,5 +147,5 @@ fun DropDownMenuRemonte(remonte: Remontees) {
         }
     }
     Log.d("database", "oui")
-    GetData(pistes)
+    //GetData(pistes)
 }

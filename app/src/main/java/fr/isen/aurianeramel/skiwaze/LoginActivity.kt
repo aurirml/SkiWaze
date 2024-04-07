@@ -56,158 +56,94 @@ class LoginActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize(),
                 // color = MaterialTheme.colorScheme.background
             ) {
+                Background()
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
 
-                TextField(
-                    value = username.value,
-                    onValueChange = { username.value = it },
-                    label = { Text("Pseudo") },
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = false
-                    )
-                )
-                TextField(
-                    value = mail.value,
-                    onValueChange = { mail.value = it },
-                    label = { Text("Adresse mail") },
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Email
-                    )
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                TextField(
-                    value = password.value,
-                    onValueChange = { password.value = it },
-                    label = { Text("Mot de passe") },
-                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Password
-                    ),
-                    trailingIcon = {
-                        val passwordIcon = if (showPassword) {
-                            Icons.Default.Visibility
-                        } else {
-                            Icons.Default.VisibilityOff
-                        }
-                        val description = if (showPassword) {
-                            "Hide Password"
-                        } else {
-                            "Show Password"
-                        }
-                        IconButton(onClick = { showPassword = !showPassword }) {
-                            Icon(imageVector = passwordIcon, contentDescription = description)
-                        }
-                    }
-                )
-                Button(
-                    onClick = { signIn(mail.value.text, password.value.text) }
                 ) {
-                    Text("Se connecter")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Pas de compte ?"
+                    Greeting(modifier = Modifier.padding(bottom = 20.dp))
+
+                    Image(
+                        painter = painterResource(id = R.drawable.skiwaze_logo),
+                        contentDescription = "Logo Skiwaze",
+                        modifier = Modifier
+                            .size(200.dp) // Modifier la taille selon vos besoins
+                            .padding(bottom = 20.dp), // Ajouter un padding pour l'espacement
+                        contentScale = ContentScale.Fit
                     )
-                    createAccount()
 
-                    Background()
-
-
-                    val mail = remember { mutableStateOf(TextFieldValue("")) }
-                    val password = remember { mutableStateOf(TextFieldValue("")) }
-                    var showPassword by remember { mutableStateOf(false) }
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-
-                    ) {
-                        Greeting(modifier = Modifier.padding(bottom = 20.dp))
-
-                        Image(
-                            painter = painterResource(id = R.drawable.skiwaze_logo),
-                            contentDescription = "Logo Skiwaze",
-                            modifier = Modifier
-                                .size(200.dp) // Modifier la taille selon vos besoins
-                                .padding(bottom = 20.dp), // Ajouter un padding pour l'espacement
-                            contentScale = ContentScale.Fit
+                    TextField(
+                        value = mail.value,
+                        onValueChange = { mail.value = it },
+                        label = { Text("Adresse mail") },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Email
                         )
-
-                        TextField(
-                            value = mail.value,
-                            onValueChange = { mail.value = it },
-                            label = { Text("Adresse mail") },
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.None,
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Email
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        TextField(
-                            value = password.value,
-                            onValueChange = { password.value = it },
-                            label = { Text("Mot de passe") },
-                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.None,
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Password
-                            ),
-                            trailingIcon = {
-                                val passwordIcon = if (showPassword) {
-                                    Icons.Default.Visibility
-                                } else {
-                                    Icons.Default.VisibilityOff
-                                }
-                                val description = if (showPassword) {
-                                    "Hide Password"
-                                } else {
-                                    "Show Password"
-                                }
-                                IconButton(onClick = { showPassword = !showPassword }) {
-                                    Icon(
-                                        imageVector = passwordIcon,
-                                        contentDescription = description
-                                    )
-                                }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    TextField(
+                        value = password.value,
+                        onValueChange = { password.value = it },
+                        label = { Text("Mot de passe") },
+                        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        trailingIcon = {
+                            val passwordIcon = if (showPassword) {
+                                Icons.Default.Visibility
+                            } else {
+                                Icons.Default.VisibilityOff
                             }
+                            val description = if (showPassword) {
+                                "Hide Password"
+                            } else {
+                                "Show Password"
+                            }
+                            IconButton(onClick = { showPassword = !showPassword }) {
+                                Icon(
+                                    imageVector = passwordIcon,
+                                    contentDescription = description
+                                )
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Button(
+                        onClick = { signIn(mail.value.text, password.value.text) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.medium_grey)
+                        ),
+                        modifier = Modifier
+                            .height(55.dp)
+                            .width(280.dp)
+                    ) {
+                        Text("Se connecter")
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Pas de compte ?"
                         )
+                        createAccount()
 
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        Button(
-                            onClick = { signIn(mail.value.text, password.value.text) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.medium_grey)
-                            ),
-                            modifier = Modifier
-                                .height(55.dp)
-                                .width(280.dp)
-                        ) {
-                            Text("Se connecter")
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Pas de compte ?"
-                            )
-                            createAccount()
-
-                        }
                     }
                 }
             }
-            Log.d("lifeCycle", "Menu Activity - OnCreate")
         }
+        Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 
 
-fun reload() {
+    fun reload() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
@@ -234,15 +170,16 @@ fun reload() {
 }
 
 @Composable
-fun createAccount(){
+fun createAccount() {
     val context = LocalContext.current
     val buttonColors = ButtonDefaults.textButtonColors(
-        contentColor = colorResource(R.color.medium_grey) // Couleur du texte
+        contentColor = colorResource(R.color.medium_grey)
     )
     TextButton(
         onClick = {
             val intent = Intent(context, RegisterActivity::class.java)
-            context.startActivity(intent) },
+            context.startActivity(intent)
+        },
         colors = buttonColors
     ) {
         Text("En créer un.")
