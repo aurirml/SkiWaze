@@ -62,46 +62,15 @@ class MainActivity : ComponentActivity() {
                     if (currentUser != null) {
                         val scrollState = rememberScrollState()
                         Column(
-                            modifier = Modifier
-                                .verticalScroll(scrollState)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(top = 16.dp, bottom = 5.dp)
-                            ) {
-                                Icon(
-                                    Icons.Filled.AcUnit,
-                                    contentDescription = null,
-                                    tint = colorResource(R.color.bright_gray),
-                                    modifier = Modifier
-                                        .size(70.dp)
-                                        .padding(top = 5.dp)
-                                )
-                                Text(
-                                    text = stringResource(R.string.app_name),
-                                    fontFamily = stg,
-                                    fontSize = 60.sp,
-                                    color = colorResource(R.color.bright_gray),
-                                    modifier = Modifier
-                                )
-                                Spacer(Modifier.height(40.dp))
-                                Icon(
-                                    Icons.Filled.AcUnit,
-                                    contentDescription = null,
-                                    tint = colorResource(R.color.bright_gray),
-                                    modifier = Modifier
-                                        .size(70.dp)
-                                        .padding(top = 5.dp)
-                                )
-                            }
+                            TopBar()
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(colorResource(R.color.nude))
-                                    .border(width = 2.dp, color = colorResource(R.color.nude)),
+                                    .background(colorResource(R.color.bright_gray))
+                                    .border(width = 2.dp, color = colorResource(R.color.bright_gray)),
                                 horizontalArrangement = Arrangement.SpaceBetween, // Espacement égal entre les éléments
                                 verticalAlignment = Alignment.CenterVertically // Aligner les éléments verticalement au centre
                             ) {
@@ -152,7 +121,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(70.dp)
-                                    .background(color = colorResource(R.color.water)),
+                                    .background(color = colorResource(R.color.columbina_blue)),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -178,10 +147,10 @@ class MainActivity : ComponentActivity() {
                                         Remontee()
                                     }
                                     item {
-                                        Piste()
+                                        Map()
                                     }
                                     item {
-                                        Remontee()
+                                        Chat()
                                     }
                                 }
                             }
@@ -233,7 +202,7 @@ fun Greeting(modifier: Modifier = Modifier) {
         text = stringResource(R.string.app_name),
         fontFamily = stg,
         fontSize = 60.sp,
-        color = colorResource(R.color.gray)
+        color = colorResource(R.color.bright_gray)
     )
 
 }
@@ -339,13 +308,12 @@ fun Piste(modifier: Modifier = Modifier) {
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-            )
+            ) // Taille fixe pour le Box contenant le texte
             Text(
                 text = stringResource(R.string.piste),
                 fontFamily = comic_sans,
                 color = colorResource(R.color.black),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(4.dp)
+                fontSize = 20.sp
             )
         }
     )
@@ -383,28 +351,125 @@ fun Remontee(modifier: Modifier = Modifier) {
                 color = colorResource(R.color.black),
                 fontFamily = comic_sans,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(7.dp)
+                fontSize = 18.sp
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Chat(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .size(
+                width = 140.dp,
+                height = 140.dp
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.powder_blue)
+        ),
+        onClick = {
+             val intent = Intent(context, ChatActivity::class.java)
+            context.startActivity(intent)
+        },
+        content = {
+            Image(
+                painter = painterResource(R.drawable.message),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Text(
+                text = stringResource(R.string.chat),
+                color = colorResource(R.color.black),
+                fontFamily = comic_sans,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
             )
         }
     )
 }
 
 @Composable
-fun MapButton() {
+fun TopBar(modifier: Modifier = Modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 5.dp)
+        ) {
+            Icon(
+                Icons.Filled.AcUnit,
+                contentDescription = null,
+                tint = colorResource(R.color.bright_gray),
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(top = 5.dp)
+            )
+            Text(
+                text = stringResource(R.string.app_name),
+                fontFamily = stg,
+                fontSize = 60.sp,
+                color = colorResource(R.color.bright_gray),
+                modifier = Modifier
+            )
+            Spacer(Modifier.height(40.dp))
+            Icon(
+                Icons.Filled.AcUnit,
+                contentDescription = null,
+                tint = colorResource(R.color.bright_gray),
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(top = 5.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Map(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    Button(
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .size(
+                width = 140.dp,
+                height = 140.dp
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.powder_blue)
+        ),
         onClick = {
             val intent = Intent(context, MapActivity::class.java)
             context.startActivity(intent)
         },
-        colors = ButtonDefaults.buttonColors(
-        ),
-        modifier = Modifier
-            .height(40.dp)
-            .width(250.dp)
-    ) {
-        Text("Map")
-    }
+        content = {
+            Image(
+                painter = painterResource(R.drawable.map_ski),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Text(
+                text = stringResource(R.string.map),
+                color = colorResource(R.color.black),
+                fontSize = 20.sp,
+                fontFamily = comic_sans
+            )
+        }
+    )
 }
 
 @Composable
@@ -424,7 +489,8 @@ fun WeatherScreen(modifier: Modifier = Modifier) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(start = 30.dp)) {
+            modifier = Modifier.padding(start = 30.dp)
+        ) {
             if (weather != null) {
                 Text(
                     text = "Température: ${weather.temperature}°C",

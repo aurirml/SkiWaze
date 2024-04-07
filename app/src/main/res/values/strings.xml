@@ -5,4 +5,6 @@
     <string name="register">Créer un compte</string>
     <string name="piste">\t Les pistes</string>
     <string name="remontee">\t Les remontées</string>
+    <string name="map">\t La carte</string>
+    <string name="chat">\t Le chat</string>
 </resources>

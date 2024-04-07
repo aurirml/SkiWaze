@@ -18,8 +18,9 @@
     <color name="powder_blue">#BEE4EB</color>
     <color name="nude">#FDE9E0</color>
     <color name="blue_gray">#6AA2CA</color>
-    <color name="green">#6AA2CA</color>
-    <color name="red">#6AA2CA</color>
+    <color name="medium_green">#3CB371</color>
+    <color name="red">#FF0000</color>
     <color name="chinese_silver">#CCCCCC</color>
     <color name="bright_gray">#EDEDED</color>
+    <color name="columbina_blue">#CFE3E6</color>
 </resources>

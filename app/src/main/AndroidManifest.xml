@@ -31,7 +31,7 @@
         </activity>
         <activity android:name=".RemonteActivity">
         </activity>
-        <activity android:name=".MapActivity">
+        <activity android:name=".ChatActivity">
         </activity>
         <activity android:name=".PisteInfoActivity">
         </activity>

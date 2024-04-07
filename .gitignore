@@ -5,5 +5,5 @@
 .gradle/buildOutputCleanup/outputFiles.bin
 .gradle/config.properties
 /.gradle
-
+.gradle
 local.properties
