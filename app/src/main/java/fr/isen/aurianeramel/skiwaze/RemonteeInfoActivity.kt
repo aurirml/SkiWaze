@@ -32,7 +32,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import fr.isen.aurianeramel.skiwaze.database.Pistes
+import fr.isen.aurianeramel.skiwaze.database.Remontees
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Autorenew
@@ -62,7 +62,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
 import fr.isen.aurianeramel.skiwaze.database.Chat
 import fr.isen.aurianeramel.skiwaze.database.Comment
-import fr.isen.aurianeramel.skiwaze.database.Remontees
 import fr.isen.aurianeramel.skiwaze.ui.theme.BluePiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.GreenPiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.Purple40
@@ -77,11 +76,11 @@ import java.util.TimeZone
 class RemonteeInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val remonteeId = intent.getIntExtra("remonteeId", -1)
+        val remonteId = intent.getIntExtra("remonteId", -1)
 
-        if (remonteeId != -1) {
-            getRemonteeById(remonteeId) { piste ->
-                if (piste != null) {
+        if (remonteId != -1) {
+            getRemonteesById(remonteId) { remonte ->
+                if (remonte != null) {
                     setContent {
                         Surface(
                             modifier = Modifier
@@ -113,18 +112,16 @@ class RemonteeInfoActivity : ComponentActivity() {
                                         modifier = Modifier
                                     )
                                 }
-                                RemonteeInfoContent(remonteeId)
+                                RemonteInfoContent(remonteId)
                             }
                         }
                     }
                 } else {
-                    // La piste n'a pas été trouvée, gérer l'erreur
                     Toast.makeText(this, "Remontée non trouvée", Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }
         } else {
-            // L'ID de la piste n'a pas été passé, gérer l'erreur
             Toast.makeText(this, "ID de la remontée non fourni", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -133,21 +130,17 @@ class RemonteeInfoActivity : ComponentActivity() {
 }
 
 @Composable
-fun RemonteeInfoContent(remonteeId: Int) {
-    val context = LocalContext.current
+fun RemonteInfoContent(remonteId: Int) {
+    val remonteState = remember { mutableStateOf<Remontees?>(null) }
 
-    // Créez un état mutable pour stocker les informations de la piste
-    val remonteeState = remember { mutableStateOf<Remontees?>(null) }
-    val auth: FirebaseAuth = Firebase.auth
-
-    LaunchedEffect(remonteeId) {
-        getRemonteeById(remonteeId) { remontee ->
-            remonteeState.value = remontee
+    LaunchedEffect(remonteId) {
+        getRemonteesById(remonteId) { remonte->
+            remonteState.value = remonte
         }
     }
 
-    // Affichez les informations de la piste dans votre interface utilisateur
-    remonteeState.value?.let { remontee ->
+    // Affichez les informations de la remontedans votre interface utilisateur
+    remonteState.value?.let { remonte->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -174,7 +167,7 @@ fun RemonteeInfoContent(remonteeId: Int) {
                         Text("\t \t")
                     }
                     Text(
-                        text = remontee.name,
+                        text = remonte.name,
                         fontFamily = comic_sans,
                         fontSize = 20.sp
                     )
@@ -182,7 +175,7 @@ fun RemonteeInfoContent(remonteeId: Int) {
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.padding(end = 20.dp)
                     ) {
-                        if (remontee.state) {
+                        if (remonte.state) {
                             Icon(
                                 imageVector = Icons.Default.DownhillSkiing,
                                 contentDescription = "Ouvert",
@@ -201,7 +194,7 @@ fun RemonteeInfoContent(remonteeId: Int) {
                     }
                 }
             }
-            var etat = remontee.state
+            var etat = remonte.state
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -209,28 +202,28 @@ fun RemonteeInfoContent(remonteeId: Int) {
 
                 if (etat) {
                     Text(
-                        text = "La piste est maintenant fermée ?",
+                        text = "La remonte est maintenant fermée ?",
                         fontFamily = comic_sans,
                         color = colorResource(R.color.black)
                     )
                 } else {
                     Text(
-                        text = "La piste est maintenant ouverte ?",
+                        text = "La remonte est maintenant ouverte ?",
                         fontFamily = comic_sans,
                         color = colorResource(R.color.black)
                     )
                 }
                 TextButton(
                     onClick = {
-                        val newStateState = !remontee.state
+                        val newStateState = !remonte.state
 
                         FirebaseDatabase
                             .getInstance()
-                            .getReference("Pistes/${remontee.id - 1}/state")
+                            .getReference("Remontees/${remonte.id - 1}/state")
                             .setValue(newStateState)
 
-                        getRemonteeById(remonteeId) { remontee ->
-                            remonteeState.value = remontee
+                        getRemonteesById(remonteId) { remonte->
+                            remonteState.value = remonte
                         }
                     }
                 )
@@ -258,82 +251,33 @@ fun RemonteeInfoContent(remonteeId: Int) {
                 .padding(top = 20.dp)
         ) {
             item {
-                //Couleur(pisteId)
+                //Couleur2(remonteId)
             }
             item {
-                //Frequentation(pisteId)
+                Frequentation2(remonteId)
+            }
+            /*item {
+                Avalanche2(remonteId)
             }
             item {
-                //Avalanche(pisteId)
-            }
-            item {
-                //Damee(pisteId)
-            }
+                Damee2(remonteId)
+            }*/
         }
-        Comment(remonteeId)
+        Comment2(remonteId)
         Spacer(Modifier.height(5.dp))
-        ComListe2(remonteeId)
+        ComListe3(remonteId)
     }
 }
 
-/*@Composable
-fun Couleur(pisteId: Int) {
-    val pisteState = remember { mutableStateOf<Pistes?>(null) }
-    LaunchedEffect(pisteId) {
-        getPisteById(pisteId) { piste ->
-            pisteState.value = piste
-        }
-    }
 
-    val couleurs = Couleurs()
-
-    val couleurBox = when (val piste = pisteState.value) {
-        is Pistes -> {
-            val couleurPiste = CouleurPiste.fromValue(piste.color)
-            convertirEnCouleurGraphique(couleurPiste, couleurs)
-        }
-
-        else -> null
-    }
-
-    Card(
-        modifier = Modifier.size(120.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.bright_gray)
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Texte au-dessus
-            Text(
-                text = "Type de piste",
-                textAlign = TextAlign.Center,
-                fontFamily = comic_sans,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-
-            // Couleur en dessous
-            couleurBox?.let { color ->
-                Box(
-                    modifier = Modifier
-                        .size(250.dp)
-                        .background(color)
-                ) {}
-            }
-        }
-    }
-}*/
 
 @Composable
-fun FrequentationRemontee(remonteeId: Int) {
+fun Frequentation2(remonteId: Int) {
     var freq: Int? by remember { mutableStateOf(null) }
 
     // Récupérer la fréquence depuis Firebase Realtime Database
     val databaseReference =
-        FirebaseDatabase.getInstance().getReference("Pistes/${remonteeId}/frequence")
+        FirebaseDatabase.getInstance().getReference("Remontees/${remonteId}/frequence")
     val valueEventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             freq = snapshot.getValue(Int::class.java)
@@ -344,7 +288,7 @@ fun FrequentationRemontee(remonteeId: Int) {
         }
     }
 
-    LaunchedEffect(remonteeId) {
+    LaunchedEffect(remonteId) {
         databaseReference.addValueEventListener(valueEventListener)
     }
 
@@ -405,190 +349,290 @@ fun FrequentationRemontee(remonteeId: Int) {
     }
 }
 
-/*@Composable
-fun Avalanche(pisteId: Int) {
-    val pisteState = remember { mutableStateOf<Pistes?>(null) }
 
 
-    LaunchedEffect(pisteId) {
-        getPisteById(pisteId) { piste ->
-            pisteState.value = piste
+@Composable
+fun Comment2(remonteId: Int) {
+    var showComment by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colorResource(R.color.bright_gray))
+            .border(
+                width = 2.dp,
+                color = colorResource(R.color.bright_gray)
+            ),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Commentaires",
+            fontFamily = stg,
+            fontSize = 30.sp,
+            color = colorResource(R.color.blue_gray),
+            modifier = Modifier.padding(start = 20.dp)
+        )
+        Spacer(Modifier.width(40.dp))
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = null,
+            tint = colorResource(R.color.blue_gray),
+            modifier = Modifier.clickable {
+                showComment = !showComment
+            }
+        )
+    }
+    Column {
+        Spacer(modifier = Modifier.height(16.dp))
+        if (showComment) {
+            AddComment2(
+                onClose = { showComment = false },
+                remonteId
+            ) // Passer la fonction onClose pour fermer l'onglet du commentaire
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddComment2(onClose: () -> Unit, remonteId: Int) {
+    val auth: FirebaseAuth = Firebase.auth
+    val userName = auth.currentUser?.displayName
+    Log.d("auth", userName ?: "")
+    val context = LocalContext.current
+    val remonteState = remember { mutableStateOf<Remontees?>(null) }
+
+    LaunchedEffect(remonteId) {
+        getRemonteesById(remonteId) { remonte->
+            remonteState.value = remonte
         }
     }
 
-    pisteState.value?.let { piste ->
-        if (piste != null) {
-            var avalanche = piste.avalanche
+    remonteState.value?.let { remonte->
+        var commentaireText by remember { mutableStateOf("") } // Variable pour stocker le texte du commentaire
 
-            Card(
-                modifier = Modifier
-                    .height(120.dp)
-                    .width(120.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.bright_gray)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Afficher le champ de texte pour saisir le commentaire
+            TextField(
+                value = commentaireText,
+                onValueChange = { commentaireText = it },
+                label = { Text("Saisissez votre commentaire") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
                 ),
+                modifier = Modifier
+                    .width(300.dp)
+                    .background(colorResource(R.color.water)),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = colorResource(R.color.water),
+                    unfocusedLabelColor = colorResource(R.color.opal),
+                    focusedLabelColor = colorResource(R.color.opal)
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        // Afficher les boutons pour soumettre ou annuler le commentaire
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                shape = RoundedCornerShape(0.dp),
+                onClick = {
+                    // Réinitialiser le contenu du champ de texte
+                    commentaireText = ""
+                    // Fermer l'onglet du commentaire
+                    onClose()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.bright_gray),
+                    contentColor = colorResource(R.color.blue_gray)
+                ),
+                modifier = Modifier.width(145.dp)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "Avalanche",
-                        fontFamily = comic_sans,
-                        fontSize = 15.sp
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.avalanche_image),
-                        contentDescription = null
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        if (avalanche) {
-                            Text(
-                                text = "En cours",
-                                fontFamily = comic_sans,
-                                fontSize = 15.sp,
-                                modifier = Modifier.padding(start = 30.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Aucun risque",
-                                fontFamily = comic_sans,
-                                fontSize = 15.sp,
-                                modifier = Modifier.padding(start = 15.dp)
-                            )
-                        }
-                        Icon(
-                            imageVector = Icons.Default.Autorenew, // Utiliser une icône pour indiquer qu'il est possible de modifier
-                            contentDescription = "Modifier Avalanche",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(end = 4.dp)
-                                .clickable {
-                                    val newAvalancheState = !piste?.avalanche!!
-                                    if (piste != null) {
-                                        FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("Pistes/${piste.id - 1}/avalanche")
-                                            .setValue(newAvalancheState)
-                                    }
+                Text("Annuler")
+            }
+            Spacer(Modifier.width(10.dp))
+            Button(
+                modifier = Modifier.width(145.dp),
+                shape = RoundedCornerShape(0.dp),
+                onClick = {
+                    val baseReference =
+                        FirebaseDatabase.getInstance().getReference("Comment")
 
-                                    getPisteById(pisteId) { piste ->
-                                        pisteState.value = piste
-                                    }
+                    baseReference.addListenerForSingleValueEvent(object :
+                        ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            var i = 1 // Initialiser un compteur pour les commentaires
+                            var newReference: DatabaseReference? =
+                                null // Référence pour le nouveau commentaire
 
+                            // Parcourir les enfants pour trouver un nœud disponible
+                            while (dataSnapshot.hasChild("$i")) {
+                                i++
+                            }
+
+                            // Créer une nouvelle référence pour le nouveau commentaire
+                            val commentReference = baseReference.child("$i")
+                            val contentReference = commentReference.child("content")
+                            val dateReference = commentReference.child("date")
+                            val userReference = commentReference.child("user_id")
+                            val remonteReference = commentReference.child("piste_id")
+
+                            // Obtenir la date actuelle
+                            val currentDate = Date()
+
+                            // Créer un formateur de date avec le format souhaité
+                            val dateFormat =
+                                SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRENCH)
+                            dateFormat.timeZone = TimeZone.getTimeZone("Europe/Paris")
+                            // Formater la date actuelle en utilisant le formateur de date
+                            val formattedTime = dateFormat.format(currentDate)
+
+                            // Écrire le nouveau commentaire et sa date
+                            userReference.setValue(userName)
+                            remonteReference.setValue(remonteId)
+                            contentReference.setValue(commentaireText)
+                                .addOnSuccessListener {
+                                    // Réinitialiser le champ de texte du commentaire
+                                    commentaireText = ""
+                                    // Écrire la date du commentaire
+                                    dateReference.setValue(formattedTime)
+                                        .addOnSuccessListener {
+                                            onClose() // Fermer l'onglet du commentaire
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            // Gérer les erreurs d'écriture de la date
+                                            Log.e(
+                                                "Firebase",
+                                                "Error writing date: $exception"
+                                            )
+                                        }
                                 }
-                        )
-                    }
-                }
+                                .addOnFailureListener { exception ->
+                                    // Gérer les erreurs d'écriture du commentaire
+                                    Log.e("Firebase", "Error writing comment: $exception")
+                                }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Gérer les erreurs d'annulation éventuelles
+                            Log.e("Firebase", "Database error: $databaseError")
+                        }
+                    })
+
+
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.bright_gray),
+                    contentColor = colorResource(R.color.blue_gray)
+                )
+            ) {
+                Text("Envoyer")
             }
         }
     }
 }
 
-@Composable
-fun Damee(pisteId: Int) {
-    val pisteState = remember { mutableStateOf<Pistes?>(null) }
-    LaunchedEffect(pisteId) {
-        getPisteById(pisteId) { piste ->
-            pisteState.value = piste
-        }
-    }
-
-    pisteState.value?.let { piste ->
-        if (piste != null) {
-            var damee = piste.damne
-
-            Card(
-                modifier = Modifier
-                    .height(120.dp)
-                    .width(120.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.bright_gray)
-                ),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "Damée",
-                        fontFamily = comic_sans,
-                        fontSize = 15.sp
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.damee),
-                        contentDescription = null
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        if (damee) {
-                            Text(
-                                text = "Oui",
-                                fontFamily = comic_sans,
-                                fontSize = 15.sp,
-                                modifier = Modifier.padding(start = 50.dp)
-                            )
-                        } else {
-                            Text(
-                                text = "Non",
-                                fontFamily = comic_sans,
-                                fontSize = 15.sp,
-                                modifier = Modifier.padding(start = 50.dp)
-                            )
-                        }
-                        Icon(
-                            imageVector = Icons.Default.Autorenew, // Utiliser une icône pour indiquer qu'il est possible de modifier
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(end = 4.dp)
-                                .clickable {
-                                    val newAvalancheState = !piste?.damne!!
-                                    if (piste != null) {
-                                        FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("Pistes/${piste.id - 1}/damne")
-                                            .setValue(newAvalancheState)
-                                    }
-
-                                    getPisteById(pisteId) { piste ->
-                                        pisteState.value = piste
-                                    }
-
-                                }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}*/
-fun getRemonteeById(remonteeId: Int, callback: (Remontees?) -> Unit) {
+fun getRemonteesById(remonteId: Int, callback: (Remontees?) -> Unit) {
     val database = FirebaseDatabase.getInstance()
     val ref = database.getReference("Remontees")
 
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             for (childSnapshot in snapshot.children) {
-                val remontee = childSnapshot.getValue(Remontees::class.java)
-                if (remontee?.id == remonteeId) {
-                    callback(remontee)
+                val remonte = childSnapshot.getValue(Remontees::class.java)
+                if (remonte?.id == remonteId) {
+                    callback(remonte)
                     return
                 }
             }
+            // Si la remonten'est pas trouvée, retourne null
             callback(null)
         }
 
         override fun onCancelled(error: DatabaseError) {
+            // Gérer les erreurs
             Log.e("Firebase", "Error fetching data", error.toException())
             callback(null)
         }
     })
 }
+
+
+
+@Composable
+fun ComListe3(id: Int) {
+    val com = remember {
+        mutableStateListOf<Comment>()
+    }
+    LaPorteCom(com)
+
+    Box(modifier = Modifier.padding(bottom = 15.dp)) {
+        LazyRow(horizontalArrangement = Arrangement.Center) {
+            item {
+                Spacer(Modifier.width(20.dp))
+            }
+            items(com.filter { it.piste_id == id }) { com ->
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Card(
+                        shape = RoundedCornerShape(0.dp),
+                        modifier = Modifier
+                            .width(180.dp)
+                            .height(80.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = colorResource(R.color.water)
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .padding(start = 5.dp)
+                        ) {
+                            Text(
+                                text = com.user_id,
+                                fontFamily = comic_sans
+                            )
+                            Text(
+                                text = com.date,
+                                fontFamily = comic_sans
+                            )
+                            Text(
+                                text = com.content,
+                                fontFamily = comic_sans
+                            )
+                            Spacer(Modifier.width(10.dp))
+                        }
+                    }
+                    Spacer(Modifier.width(10.dp))
+                }
+            }
+        }
+    }
+}
+fun LaPorteCom2(com: MutableList<Comment>) {
+    val database = FirebaseDatabase.getInstance()
+    val chatRef = database.getReference("Comment")
+
+    chatRef.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            val coms = mutableListOf<Comment>()
+            for (snapshot in dataSnapshot.children) {
+                val com = snapshot.getValue(Comment::class.java)
+                com?.let { coms.add(it) }
+            }
+            com.clear()
+            com.addAll(coms)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            println("Error: ${databaseError.message}")
+        }
+    })
+}
+

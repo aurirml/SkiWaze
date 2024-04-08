@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".RemonteActivity">
         </activity>
+        <activity android:name=".RemonteeInfoActivity">
+        </activity>
         <activity android:name=".ChatActivity">
         </activity>
         <activity android:name=".PisteInfoActivity">
