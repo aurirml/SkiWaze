@@ -1,80 +1,49 @@
 package fr.isen.aurianeramel.skiwaze
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.AutoCompleteTextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Text
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.TextField
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
-import coil.transform.RoundedCornersTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
 import fr.isen.aurianeramel.skiwaze.database.Pistes
 import fr.isen.aurianeramel.skiwaze.database.Remontees
 import java.util.Stack
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.toLowerCase
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DownhillSkiing
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.ui.Alignment
@@ -82,9 +51,7 @@ import androidx.compose.ui.res.colorResource
 import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
 import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
 import fr.isen.aurianeramel.skiwaze.ui.theme.stg
-
-//import androidx.compose.material.Text
-
+import androidx.compose.material3.Button
 
 class MapActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,18 +88,11 @@ class MapActivity : ComponentActivity() {
                                 modifier = Modifier
                             )
                         }
-                        Divider(color = Color.Gray, thickness = 1.dp)
                         AutoComplete2()
                     }
 
                 }
             }
-            /*Column {
-                Divider(color = Color.Gray, thickness = 1.dp)
-                AutoComplete2()
-            }*/
-            //DisplayPaths(start = 1, end =10 )
-
         }
     }
 }
@@ -210,7 +170,6 @@ fun IdRemonteToInfo(id :Int):Boolean{
 
 @Composable
 fun ListVoisin(depart : Int): List<Int>{
-    //val voisinage =mutableListOf<Int>()
     val voisinage = remember(depart) {
         mutableStateListOf<Int>()
     }
@@ -263,7 +222,8 @@ fun DisplayPaths(start: Int, end: Int) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = 15.dp)
 
     ) {
         //Spacer(Modifier.height(20.dp))
@@ -445,10 +405,11 @@ fun AutoComplete2() {
             )
     ) {
 
-        androidx.compose.material.Text(
+        Text(
             modifier = Modifier.padding(start = 3.dp, bottom = 2.dp),
             text = "Depart",
             fontSize = 16.sp,
+            fontFamily = comic_sans,
             color = Color.Black,
             fontWeight = FontWeight.Medium
         )
@@ -565,6 +526,7 @@ fun AutoComplete2() {
             modifier = Modifier.padding(start = 3.dp, bottom = 2.dp),
             text = "Arrivee",
             fontSize = 16.sp,
+            fontFamily = comic_sans,
             color = Color.Black,
             fontWeight = FontWeight.Medium
         )
@@ -664,8 +626,16 @@ fun AutoComplete2() {
     }
 
     Button(
+        shape = RoundedCornerShape(0.dp),
         onClick = { showResults = true },
-        modifier = Modifier.padding(16.dp)
+        colors = ButtonDefaults.buttonColors(
+            colorResource(R.color.bright_gray),
+            contentColorFor(colorResource(R.color.blue_gray))
+        ),
+        modifier = Modifier
+            .height(80.dp)
+            .width(280.dp)
+            .padding(16.dp)
     ) {
         Text("Afficher les éléments")
     }
@@ -674,8 +644,9 @@ fun AutoComplete2() {
             DisplayPaths(start = getIdFromPisteName(category1), end =getIdFromPisteName(category2) )
 
         }else{
-            Text("piste ou remonter non existante: ")
+            Text("piste ou remontée non existante: ")
         }
     }
+
 }
 

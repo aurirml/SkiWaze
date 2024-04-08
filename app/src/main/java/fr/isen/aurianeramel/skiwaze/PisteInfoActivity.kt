@@ -133,11 +133,7 @@ class PisteInfoActivity : ComponentActivity() {
 
 @Composable
 fun PisteInfoContent(pisteId: Int) {
-    val context = LocalContext.current
-
-    // Créez un état mutable pour stocker les informations de la piste
     val pisteState = remember { mutableStateOf<Pistes?>(null) }
-    val auth: FirebaseAuth = Firebase.auth
 
     LaunchedEffect(pisteId) {
         getPisteById(pisteId) { piste ->
@@ -821,28 +817,10 @@ class Couleurs {
 }
 
 @Composable
-fun GetCom(com: SnapshotStateList<Comment>) {
-    DataBaseHelper.database.getReference("Comment")
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("database", "b")
-                val _com = snapshot.children.mapNotNull { it.getValue(Comment::class.java) }
-                Log.d("database", com.toString())
-                com.addAll(_com)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("dataBase", error.toString())
-            }
-        })
-}
-
-@Composable
 fun ComListe2(id: Int) {
     val com = remember {
         mutableStateListOf<Comment>()
     }
-    //GetCom(com)
     LaPorteCom(com)
 
     Box(modifier = Modifier.padding(bottom = 15.dp)) {
