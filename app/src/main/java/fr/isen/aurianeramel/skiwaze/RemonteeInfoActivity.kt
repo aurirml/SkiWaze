@@ -134,13 +134,13 @@ fun RemonteInfoContent(remonteId: Int) {
     val remonteState = remember { mutableStateOf<Remontees?>(null) }
 
     LaunchedEffect(remonteId) {
-        getRemonteesById(remonteId) { remonte->
+        getRemonteesById(remonteId) { remonte ->
             remonteState.value = remonte
         }
     }
 
     // Affichez les informations de la remontedans votre interface utilisateur
-    remonteState.value?.let { remonte->
+    remonteState.value?.let { remonte ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -222,7 +222,7 @@ fun RemonteInfoContent(remonteId: Int) {
                             .getReference("Remontees/${remonte.id - 101}/state")
                             .setValue(newStateState)
 
-                        getRemonteesById(remonteId) { remonte->
+                        getRemonteesById(remonteId) { remonte ->
                             remonteState.value = remonte
                         }
                     }
@@ -241,35 +241,13 @@ fun RemonteInfoContent(remonteId: Int) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(50.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp),
-            modifier = Modifier
-                .widthIn(max = 300.dp)
-                .height(300.dp)
-                .padding(top = 20.dp)
-        ) {
-            item {
-                //Couleur2(remonteId)
-            }
-            item {
-                Frequentation2(remonteId)
-            }
-            /*item {
-                Avalanche2(remonteId)
-            }
-            item {
-                Damee2(remonteId)
-            }*/
-        }
-        Comment2(remonteId)
-        Spacer(Modifier.height(5.dp))
-        ComListe3(remonteId)
+        Frequentation2(remonteId)
     }
+    Spacer(Modifier.height(15.dp))
+    Comment2(remonteId)
+    Spacer(Modifier.height(5.dp))
+    ComListe3(remonteId)
 }
-
-
 
 @Composable
 fun Frequentation2(remonteId: Int) {
@@ -277,7 +255,7 @@ fun Frequentation2(remonteId: Int) {
 
     // Récupérer la fréquence depuis Firebase Realtime Database
     val databaseReference =
-        FirebaseDatabase.getInstance().getReference("Remontees/${remonteId -101}/frequence")
+        FirebaseDatabase.getInstance().getReference("Remontees/${remonteId - 101}/frequence")
     val valueEventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             freq = snapshot.getValue(Int::class.java)
@@ -350,7 +328,6 @@ fun Frequentation2(remonteId: Int) {
 }
 
 
-
 @Composable
 fun Comment2(remonteId: Int) {
     var showComment by remember { mutableStateOf(false) }
@@ -403,12 +380,12 @@ fun AddComment2(onClose: () -> Unit, remonteId: Int) {
     val remonteState = remember { mutableStateOf<Remontees?>(null) }
 
     LaunchedEffect(remonteId) {
-        getRemonteesById(remonteId) { remonte->
+        getRemonteesById(remonteId) { remonte ->
             remonteState.value = remonte
         }
     }
 
-    remonteState.value?.let { remonte->
+    remonteState.value?.let { remonte ->
         var commentaireText by remember { mutableStateOf("") } // Variable pour stocker le texte du commentaire
 
         Column(
@@ -565,7 +542,6 @@ fun getRemonteesById(remonteId: Int, callback: (Remontees?) -> Unit) {
 }
 
 
-
 @Composable
 fun ComListe3(id: Int) {
     val com = remember {
@@ -615,24 +591,3 @@ fun ComListe3(id: Int) {
         }
     }
 }
-fun LaPorteCom2(com: MutableList<Comment>) {
-    val database = FirebaseDatabase.getInstance()
-    val chatRef = database.getReference("Comment")
-
-    chatRef.addValueEventListener(object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val coms = mutableListOf<Comment>()
-            for (snapshot in dataSnapshot.children) {
-                val com = snapshot.getValue(Comment::class.java)
-                com?.let { coms.add(it) }
-            }
-            com.clear()
-            com.addAll(coms)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            println("Error: ${databaseError.message}")
-        }
-    })
-}
-
