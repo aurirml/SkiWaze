@@ -1,5 +1,6 @@
 package fr.isen.aurianeramel.skiwaze
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.AutoCompleteTextView
@@ -72,6 +73,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DownhillSkiing
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.colorResource
+import fr.isen.aurianeramel.skiwaze.ui.theme.SkiWazeTheme
+import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
+import fr.isen.aurianeramel.skiwaze.ui.theme.stg
+
 //import androidx.compose.material.Text
 
 
@@ -79,10 +90,47 @@ class MapActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Column {
+            SkiWazeTheme {
+                // A surface container using the 'background' color from the theme
+                androidx.compose.material3.Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    // color = MaterialTheme.colorScheme.background
+                ) {
+                    Background()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        TopBar()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(colorResource(R.color.bright_gray))
+                                .border(
+                                    width = 2.dp,
+                                    color = colorResource(R.color.bright_gray)
+                                ),
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = "Itinéraire",
+                                fontFamily = stg,
+                                fontSize = 30.sp,
+                                color = colorResource(R.color.blue_gray),
+                                modifier = Modifier
+                            )
+                        }
+                        Divider(color = Color.Gray, thickness = 1.dp)
+                        AutoComplete2()
+                    }
+
+                }
+            }
+            /*Column {
                 Divider(color = Color.Gray, thickness = 1.dp)
                 AutoComplete2()
-            }
+            }*/
             //DisplayPaths(start = 1, end =10 )
 
         }
@@ -109,7 +157,7 @@ fun IdToName(depart : Int): String{
             return rem.name
         }
     }
-    return "!"
+    return "Recherche en cours"
 }
 @Composable
 fun getIdFromPisteName(name: String): Int {
@@ -212,14 +260,56 @@ fun ListVoisin(depart : Int): List<Int>{
 @Composable
 fun DisplayPaths(start: Int, end: Int) {
     val paths = removeDuplicateRows( findAllPaths(start, end))
-    Column {
-        for (liste in paths) {
-            Text(text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            Column {
-                for (element in liste) {
-                    Text(text = " "+IdToName(element))
-                }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+
+    ) {
+        //Spacer(Modifier.height(20.dp))
+        LazyColumn(    horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center, // Alignement vertical au centre
+        ) {
+
+            items(paths.toList()){liste ->
+                Divider(color = Color.Gray, thickness = 1.dp)
+                Text(text = "Itinéraire",
+                        fontFamily = comic_sans,
+
+                )
+                for(piste in liste){
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 0.dp,
+                    ),
+                    modifier = Modifier
+                        .size(
+                            width = 250.dp,
+                            height = 60.dp
+                        )
+                        .padding(top = 20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorResource(R.color.powder_blue)
+                    ),
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.Absolute.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                        ) {
+                            Row {}
+                            Text(
+                                text = IdToName(piste),
+                                fontFamily = comic_sans
+
+                            )
+                        }
+                    }
+                )
             }
+        }
         }
     }
 }
@@ -579,13 +669,12 @@ fun AutoComplete2() {
     ) {
         Text("Afficher les éléments")
     }
-
     if (showResults) {
-        Text("Catégorie 1: "+ getIdFromPisteName(category1))
-        Text("Catégorie 2: "+ getIdFromPisteName(category2))
         if (getIdFromPisteName(category1)!=-1 && getIdFromPisteName(category2)!=-1){
             DisplayPaths(start = getIdFromPisteName(category1), end =getIdFromPisteName(category2) )
 
+        }else{
+            Text("piste ou remonter non existante: ")
         }
     }
 }
