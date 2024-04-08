@@ -60,6 +60,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
+import fr.isen.aurianeramel.skiwaze.database.Chat
 import fr.isen.aurianeramel.skiwaze.database.Comment
 import fr.isen.aurianeramel.skiwaze.ui.theme.BluePiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.GreenPiste
@@ -841,7 +842,8 @@ fun ComListe2(id: Int) {
     val com = remember {
         mutableStateListOf<Comment>()
     }
-    GetCom(com)
+    //GetCom(com)
+    LaPorteCom(com)
 
     Box(modifier = Modifier.padding(bottom = 15.dp)) {
         LazyRow(horizontalArrangement = Arrangement.Center) {
@@ -886,6 +888,7 @@ fun ComListe2(id: Int) {
     }
 }
 
+<<<<<<< HEAD
 
 @Composable
 fun Ferme(pisteId: Int) {
@@ -949,3 +952,26 @@ fun Ferme(pisteId: Int) {
         }
     }
 }
+=======
+fun LaPorteCom(com: MutableList<Comment>) {
+    val database = FirebaseDatabase.getInstance()
+    val chatRef = database.getReference("Comment")
+
+    chatRef.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            val coms = mutableListOf<Comment>()
+            for (snapshot in dataSnapshot.children) {
+                val com = snapshot.getValue(Comment::class.java)
+                com?.let { coms.add(it) }
+            }
+            com.clear()
+            com.addAll(coms)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            println("Error: ${databaseError.message}")
+        }
+    })
+}
+
+>>>>>>> be90e3942e3029c3de4a933b5c7e9b504185147d
