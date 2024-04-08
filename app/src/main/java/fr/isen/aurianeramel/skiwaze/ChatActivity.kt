@@ -1,13 +1,7 @@
 package fr.isen.aurianeramel.skiwaze
 
-
-
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
-import com.google.firebase.database.*
-
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,24 +9,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,8 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -55,58 +43,27 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
-import fr.isen.aurianeramel.skiwaze.database.Pistes
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import android.widget.Toast
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DownhillSkiing
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-
-import androidx.compose.ui.unit.sp
 import fr.isen.aurianeramel.skiwaze.database.Chat
-
-import fr.isen.aurianeramel.skiwaze.database.Comment
-import fr.isen.aurianeramel.skiwaze.ui.theme.BluePiste
-import fr.isen.aurianeramel.skiwaze.ui.theme.GreenPiste
-import fr.isen.aurianeramel.skiwaze.ui.theme.Purple40
-import fr.isen.aurianeramel.skiwaze.ui.theme.RedPiste
 import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
 import fr.isen.aurianeramel.skiwaze.ui.theme.stg
 
@@ -115,12 +72,28 @@ class ChatActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Column {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                // color = MaterialTheme.colorScheme.background
+            ) {
+                Background()
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier
+                        .height(350.dp)
+                        .fillMaxWidth()
+                ) {
+                    TopBar()
+                    ChatAffiche()
+                    Spacer(Modifier.height(10.dp))
+                    Chatlist()
 
-            //ChatPage()
-                ChatAffiche()
-                androidx.compose.material.Divider(color = Color.Gray, thickness = 1.dp)
-                Chatlist()
+                }
+                Column(verticalArrangement = Arrangement.Bottom) {
+                    AddCHAT(
+                        onClose = { },
+                    )
+                }
             }
         }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
@@ -133,33 +106,23 @@ class ChatActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun GetChat(com: SnapshotStateList<Chat>) {
-    DataBaseHelper.database.getReference("Chat")
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val _com = snapshot.children.mapNotNull { it.getValue(Chat::class.java) }
-                com.addAll(_com)
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("dataBase", error.toString())
-            }
-        })
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCHAT(onClose: () -> Unit) {
     val auth: FirebaseAuth = Firebase.auth
     val userName = auth.currentUser?.displayName
     Log.d("auth", userName ?: "")
-    val context = LocalContext.current
-        var commentaireText by remember { mutableStateOf("") } // Variable pour stocker le texte du commentaire
+    var commentaireText by remember { mutableStateOf("") } // Variable pour stocker le texte du commentaire
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 15.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start
         ) {
             // Afficher le champ de texte pour saisir le commentaire
             TextField(
@@ -170,8 +133,9 @@ fun AddCHAT(onClose: () -> Unit) {
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
+                maxLines = 2,
                 modifier = Modifier
-                    .width(300.dp)
+                    .width(320.dp)
                     .background(colorResource(R.color.water)),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = colorResource(R.color.water),
@@ -179,33 +143,7 @@ fun AddCHAT(onClose: () -> Unit) {
                     focusedLabelColor = colorResource(R.color.opal)
                 )
             )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        // Afficher les boutons pour soumettre ou annuler le commentaire
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                shape = RoundedCornerShape(0.dp),
-                onClick = {
-                    // Réinitialiser le contenu du champ de texte
-                    commentaireText = ""
-                    // Fermer l'onglet du commentaire
-                    onClose()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.bright_gray),
-                    contentColor = colorResource(R.color.blue_gray)
-                ),
-                modifier = Modifier.width(145.dp)
-            ) {
-                androidx.compose.material3.Text("Annuler")
-            }
-            Spacer(Modifier.width(10.dp))
-            Button(
-                modifier = Modifier.width(145.dp),
-                shape = RoundedCornerShape(0.dp),
+            IconButton(
                 onClick = {
                     val baseReference =
                         FirebaseDatabase.getInstance().getReference("Chat")
@@ -268,22 +206,21 @@ fun AddCHAT(onClose: () -> Unit) {
                             Log.e("Firebase", "Database error: $databaseError")
                         }
                     })
-
-
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.bright_gray),
-                    contentColor = colorResource(R.color.blue_gray)
-                )
+                }
             ) {
-                androidx.compose.material3.Text("Envoyer")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    tint = colorResource(R.color.blue_gray),
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
             }
         }
+    }
 }
 
 @Composable
 fun ChatAffiche() {
-    var showComment by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -295,78 +232,85 @@ fun ChatAffiche() {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        androidx.compose.material3.Text(
+        Text(
             text = "Chat",
             fontFamily = stg,
             fontSize = 30.sp,
             color = colorResource(R.color.blue_gray),
             modifier = Modifier.padding(start = 20.dp)
         )
-        Spacer(Modifier.width(40.dp))
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = null,
-            tint = colorResource(R.color.blue_gray),
-            modifier = Modifier.clickable {
-                showComment = !showComment
-            }
-        )
-    }
-    Column {
-        Spacer(modifier = Modifier.height(16.dp))
-        if (showComment) {
-            AddCHAT(
-                onClose = { showComment = false },
-            ) // Passer la fonction onClose pour fermer l'onglet du commentaire
-        }
     }
 }
 
 @Composable
 fun Chatlist() {
-    val auth: FirebaseAuth = Firebase.auth
-    val userName = auth.currentUser?.displayName
+    lateinit var auth: FirebaseAuth
+    auth = Firebase.auth
+
     val chat = remember {
         mutableStateListOf<Chat>()
     }
+
     LaPorte(chat)
-        LazyColumn {
-            items(chat){ chat ->
-                Column {
-                    Card(
-                        shape = RoundedCornerShape(20.dp),
+
+    val listState = rememberLazyListState()
+
+    // Appel de scrollToItem une seule fois lorsque la liste est prête
+    LaunchedEffect(Unit) {
+        if (chat.isNotEmpty()) {
+            listState.animateScrollToItem(chat.size - 1)
+        }
+    }
+
+    LazyColumn(
+        modifier = Modifier.height(410.dp),
+        state = listState
+    ) {
+        items(chat) { chat ->
+            var alignText = if (chat.user_id == auth.currentUser?.displayName) {
+                Alignment.End
+            } else {
+                Alignment.Start
+            }
+            Column(
+                horizontalAlignment = alignText,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Card(
+                    shape = RoundedCornerShape(5.dp),
+                    modifier = Modifier
+                        .padding(start = 10.dp, end = 10.dp)
+                        .width(250.dp)
+                        .height(80.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorResource(R.color.water)
+                    )
+                ) {
+                    Column(
                         modifier = Modifier
-                            .width(180.dp)
-                            .height(80.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = colorResource(R.color.water)
-                        )
+                            .verticalScroll(rememberScrollState())
+                            .padding(start = 15.dp, top = 5.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
-                                .padding(start = 5.dp)
-                        ) {
-                                androidx.compose.material3.Text(
-                                    text = chat.user_id,
-                                    fontFamily = comic_sans,
-                                )
-                                androidx.compose.material3.Text(
-                                    text = chat.date,
-                                    fontFamily = comic_sans,
-                                )
-                                androidx.compose.material3.Text(
-                                    text = chat.content,
-                                    fontFamily = comic_sans,
-                                )
-                                Spacer(Modifier.width(10.dp))
-                        }
+                        Text(
+                            text = chat.user_id,
+                            fontFamily = comic_sans,
+                        )
+                        Text(
+                            text = chat.date,
+                            fontFamily = comic_sans,
+                        )
+                        Text(
+                            text = chat.content,
+                            fontFamily = comic_sans,
+                        )
+                        Spacer(Modifier.width(10.dp))
                     }
-                    Spacer(Modifier.width(10.dp))
                 }
+                Spacer(Modifier.height(10.dp))
             }
         }
     }
+}
 
 fun LaPorte(chat: MutableList<Chat>) {
     val database = FirebaseDatabase.getInstance()
@@ -381,9 +325,6 @@ fun LaPorte(chat: MutableList<Chat>) {
             }
             chat.clear()
             chat.addAll(chats)
-
-            // Ne plus appeler GetChat ici, car la liste de chat est mise à jour directement
-            // GetChat(com)
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
