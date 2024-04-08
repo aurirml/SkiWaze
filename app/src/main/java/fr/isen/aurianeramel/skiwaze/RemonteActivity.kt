@@ -1,5 +1,6 @@
 package fr.isen.aurianeramel.skiwaze
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,9 @@ import fr.isen.aurianeramel.skiwaze.database.Pistes
 
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.DownhillSkiing
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -35,8 +39,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import fr.isen.aurianeramel.skiwaze.database.Remontees
+import fr.isen.aurianeramel.skiwaze.ui.theme.comic_sans
 
 class RemonteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +55,14 @@ class RemonteActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Background()
-                    TopBar()
-                    Greeting3()
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        TopBar()
+                        Greeting3()
+                    }
                 }
             }
         }
@@ -79,6 +91,7 @@ fun GetData2(remontees: SnapshotStateList<Remontees>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting3() {
+    val context = LocalContext.current
     val remonteeees = remember {
         mutableStateListOf<Remontees>()
     }
@@ -89,17 +102,58 @@ fun Greeting3() {
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 0.dp,
                 ),
+                modifier = Modifier
+                    .size(
+                        width = 250.dp,
+                        height = 60.dp
+                    )
+                    .padding(top = 20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(R.color.powder_blue)
+                ),
+                onClick = {
+                    val intent = Intent(context, RemonteeInfoActivity::class.java)
+                    intent.putExtra(
+                        "remonteeId",
+                        remontee.id
+                    ) // Envoyer l'identifiant de la piste à l'activité suivante
+                    context.startActivity(intent)
+                },
                 content = {
-                    Text("bonjour")
-                    /*
-                    Text(
-                        text = remontee.name,
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp), // Ajoutez une marge pour l'esthétique
-                    )
-                    Divider() // Ajoute une ligne de séparation entre les éléments
-                    DropDownMenuRemonte(remontee)*/
+                            .padding(top = 8.dp)
+                    ) {
+                        Row {}
+                        Text(
+                            text = remontee.name,
+                            fontFamily = comic_sans
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.padding(end = 20.dp)
+                        ) {
+                            if (remontee.state) {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = "Ouvert",
+                                    tint = colorResource(R.color.medium_green),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = null,
+                                    tint = colorResource(R.color.red),
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             )
         }
