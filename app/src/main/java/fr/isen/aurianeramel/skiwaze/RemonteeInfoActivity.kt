@@ -219,7 +219,7 @@ fun RemonteInfoContent(remonteId: Int) {
 
                         FirebaseDatabase
                             .getInstance()
-                            .getReference("Remontees/${remonte.id - 1}/state")
+                            .getReference("Remontees/${remonte.id - 101}/state")
                             .setValue(newStateState)
 
                         getRemonteesById(remonteId) { remonte->
@@ -277,7 +277,7 @@ fun Frequentation2(remonteId: Int) {
 
     // Récupérer la fréquence depuis Firebase Realtime Database
     val databaseReference =
-        FirebaseDatabase.getInstance().getReference("Remontees/${remonteId}/frequence")
+        FirebaseDatabase.getInstance().getReference("Remontees/${remonteId -101}/frequence")
     val valueEventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             freq = snapshot.getValue(Int::class.java)
