@@ -199,37 +199,78 @@ fun PisteInfoContent(pisteId: Int) {
                     }
                 }
             }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            var etat = piste.state
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(50.dp),
-                    verticalArrangement = Arrangement.spacedBy(30.dp),
-                    modifier = Modifier
-                        .widthIn(max = 300.dp)
-                        .height(300.dp)
-                        .padding(top = 20.dp)
-                ) {
-                    item {
-                        Couleur(pisteId)
-                    }
-                    item {
-                        Frequentation(pisteId)
-                    }
-                    item {
-                        Avalanche(pisteId)
-                    }
-                    item {
-                        Damee(pisteId)
-                    }
+
+                if (etat) {
+                    Text(
+                        text = "La piste est maintenant fermée ?",
+                        fontFamily = comic_sans,
+                        color = colorResource(R.color.black)
+                    )
+                } else {
+                    Text(
+                        text = "La piste est maintenant ouverte ?",
+                        fontFamily = comic_sans,
+                        color = colorResource(R.color.black)
+                    )
                 }
-                Comment(pisteId)
-                Spacer(Modifier.height(5.dp))
-                ComListe2(pisteId)
+                TextButton(
+                    onClick = {
+                        val newStateState = !piste.state
+
+                        FirebaseDatabase
+                            .getInstance()
+                            .getReference("Pistes/${piste.id - 1}/state")
+                            .setValue(newStateState)
+
+                        getPisteById(pisteId) { piste ->
+                            pisteState.value = piste
+                        }
+                    }
+                )
+                {
+                    Text(
+                        text = "Changer l'état.",
+                        color = colorResource(R.color.bright_gray),
+                        fontFamily = comic_sans
+                    )
+                }
             }
         }
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(50.dp),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
+            modifier = Modifier
+                .widthIn(max = 300.dp)
+                .height(300.dp)
+                .padding(top = 20.dp)
+        ) {
+            item {
+                Couleur(pisteId)
+            }
+            item {
+                Frequentation(pisteId)
+            }
+            item {
+                Avalanche(pisteId)
+            }
+            item {
+                Damee(pisteId)
+            }
+        }
+        Comment(pisteId)
+        Spacer(Modifier.height(5.dp))
+        ComListe2(pisteId)
     }
 }
 
@@ -845,3 +886,66 @@ fun ComListe2(id: Int) {
     }
 }
 
+
+@Composable
+fun Ferme(pisteId: Int) {
+    val pisteState = remember { mutableStateOf<Pistes?>(null) }
+
+    LaunchedEffect(pisteId) {
+        getPisteById(pisteId) { piste ->
+            pisteState.value = piste
+        }
+    }
+
+    pisteState.value?.let { piste ->
+        if (piste != null) {
+            var etat = piste.state
+
+            if (etat) {
+                Text(
+                    text = "La piste est maintenant fermée ?"
+                )
+                TextButton(
+                    onClick = {
+                        val newStateState = !piste.state
+
+
+                        FirebaseDatabase
+                            .getInstance()
+                            .getReference("Pistes/${piste.id - 1}/state")
+                            .setValue(newStateState)
+
+                        getPisteById(pisteId) { piste ->
+                            pisteState.value = piste
+                        }
+                    }
+                )
+                {
+                    Text("Changer l'état.")
+                }
+            } else {
+                Text(
+                    text = "La piste est maintenant ouverte ?"
+                )
+                TextButton(
+                    onClick = {
+                        val newStateState = !piste.state
+
+
+                        FirebaseDatabase
+                            .getInstance()
+                            .getReference("Pistes/${piste.id - 1}/state")
+                            .setValue(newStateState)
+
+                        getPisteById(pisteId) { piste ->
+                            pisteState.value = piste
+                        }
+                    }
+                )
+                {
+                    Text("Changer l'état.")
+                }
+            }
+        }
+    }
+}

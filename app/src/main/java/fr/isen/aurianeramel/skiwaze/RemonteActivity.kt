@@ -47,9 +47,10 @@ class RemonteActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    Background()
+                    TopBar()
+                    Greeting3()
                 }
-                Greeting3()
             }
         }
         Log.d("lifeCycle", "Menu Activity - OnCreate")
@@ -77,20 +78,17 @@ fun Greeting3() {
         mutableStateListOf<Remontees>()
     }
     LazyColumn {
-        items(remonteeees.toList()) {piste ->
+        items(remonteeees.toList()) {remontee ->
             Column {
                 Text(
-                    text = piste.name,
+                    text = remontee.name,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp), // Ajoutez une marge pour l'esthétique
                 )
                 Divider() // Ajoute une ligne de séparation entre les éléments
-                DropDownMenuRemonte(piste)
+                DropDownMenuRemonte(remontee)
             }
-
-
-            //Text(it.name)
         }
     }
     Log.d("database", "oui")
@@ -101,10 +99,6 @@ fun Greeting3() {
 fun DropDownMenuRemonte(remonte: Remontees) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-    val pistes = remember {
-        mutableStateListOf<Pistes>()
-    }
-
     Box(
         modifier = Modifier.wrapContentSize(Alignment.TopEnd)
     ) {
@@ -114,7 +108,6 @@ fun DropDownMenuRemonte(remonte: Remontees) {
                 contentDescription = "More"
             )
         }
-
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -146,6 +139,4 @@ fun DropDownMenuRemonte(remonte: Remontees) {
 
         }
     }
-    Log.d("database", "oui")
-    //GetData(pistes)
 }
