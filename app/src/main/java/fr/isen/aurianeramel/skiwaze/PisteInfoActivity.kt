@@ -887,72 +887,6 @@ fun ComListe2(id: Int) {
         }
     }
 }
-
-<<<<<<< HEAD
-
-@Composable
-fun Ferme(pisteId: Int) {
-    val pisteState = remember { mutableStateOf<Pistes?>(null) }
-
-    LaunchedEffect(pisteId) {
-        getPisteById(pisteId) { piste ->
-            pisteState.value = piste
-        }
-    }
-
-    pisteState.value?.let { piste ->
-        if (piste != null) {
-            var etat = piste.state
-
-            if (etat) {
-                Text(
-                    text = "La piste est maintenant fermée ?"
-                )
-                TextButton(
-                    onClick = {
-                        val newStateState = !piste.state
-
-
-                        FirebaseDatabase
-                            .getInstance()
-                            .getReference("Pistes/${piste.id - 1}/state")
-                            .setValue(newStateState)
-
-                        getPisteById(pisteId) { piste ->
-                            pisteState.value = piste
-                        }
-                    }
-                )
-                {
-                    Text("Changer l'état.")
-                }
-            } else {
-                Text(
-                    text = "La piste est maintenant ouverte ?"
-                )
-                TextButton(
-                    onClick = {
-                        val newStateState = !piste.state
-
-
-                        FirebaseDatabase
-                            .getInstance()
-                            .getReference("Pistes/${piste.id - 1}/state")
-                            .setValue(newStateState)
-
-                        getPisteById(pisteId) { piste ->
-                            pisteState.value = piste
-                        }
-                    }
-                )
-                {
-                    Text("Changer l'état.")
-                }
-            }
-        }
-    }
-}
-=======
 fun LaPorteCom(com: MutableList<Comment>) {
     val database = FirebaseDatabase.getInstance()
     val chatRef = database.getReference("Comment")
@@ -974,4 +908,3 @@ fun LaPorteCom(com: MutableList<Comment>) {
     })
 }
 
->>>>>>> be90e3942e3029c3de4a933b5c7e9b504185147d

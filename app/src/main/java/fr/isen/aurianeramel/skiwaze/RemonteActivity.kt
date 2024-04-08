@@ -1,4 +1,5 @@
 package fr.isen.aurianeramel.skiwaze
+
 import androidx.activity.ComponentActivity
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +57,7 @@ class RemonteActivity : ComponentActivity() {
         Log.d("lifeCycle", "Menu Activity - OnCreate")
     }
 }
+
 @Composable
 fun GetData2(remontees: SnapshotStateList<Remontees>) {
     Log.d("database", "a")
@@ -67,28 +69,39 @@ fun GetData2(remontees: SnapshotStateList<Remontees>) {
                 Log.d("database", remontees.toString())
                 remontees.addAll(_Remontees)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.e("dataBase", error.toString())
             }
         })
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting3() {
     val remonteeees = remember {
         mutableStateListOf<Remontees>()
     }
+
     LazyColumn {
-        items(remonteeees.toList()) {remontee ->
-            Column {
-                Text(
-                    text = remontee.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp), // Ajoutez une marge pour l'esthétique
-                )
-                Divider() // Ajoute une ligne de séparation entre les éléments
-                DropDownMenuRemonte(remontee)
-            }
+        items(remonteeees.toList()) { remontee ->
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 0.dp,
+                ),
+                content = {
+                    Text("bonjour")
+                    /*
+                    Text(
+                        text = remontee.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp), // Ajoutez une marge pour l'esthétique
+                    )
+                    Divider() // Ajoute une ligne de séparation entre les éléments
+                    DropDownMenuRemonte(remontee)*/
+                }
+            )
         }
     }
     Log.d("database", "oui")
@@ -115,7 +128,8 @@ fun DropDownMenuRemonte(remonte: Remontees) {
             DropdownMenuItem(
                 text = { Text("Difficulté: ${remonte.type}") },
                 onClick = {
-                    Toast.makeText(context, "Difficulté: ${remonte.type}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Difficulté: ${remonte.type}", Toast.LENGTH_SHORT)
+                        .show()
                     expanded = false
                 }
             )
@@ -131,7 +145,11 @@ fun DropDownMenuRemonte(remonte: Remontees) {
             DropdownMenuItem(
                 text = { Text("Fréquentation: ${remonte.frequence}") },
                 onClick = {
-                    Toast.makeText(context, "Fréquentation: ${remonte.frequence}", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        context,
+                        "Fréquentation: ${remonte.frequence}",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     expanded = false
                 }
